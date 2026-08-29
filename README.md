@@ -59,7 +59,7 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 > **Current State:** Lander fully controllable with physics. Thrust + rotation working. Ready for terrain and landing logic.
 
 ### 🚀 Live Demo
-<img width="100%" alt="Lander Thrust & Rotation - AddForce + AddTorque" src="https://github.com/user-attachments/assets/8ae7d51e-3bc7-4af8-a36d-1f3f495517a9" />
+<img width="480" height="346" alt="Image" src="https://github.com/user-attachments/assets/cdd6d676-74e7-4bea-ba26-008bbeede528" />
 
 *Lander with full physics control - Thrust where tip/nose points + rotation. FixedUpdate + Damping.*
 
