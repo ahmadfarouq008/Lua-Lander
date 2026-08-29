@@ -652,6 +652,7 @@ GameObject:
   - component: {fileID: 1590875264}
   - component: {fileID: 1590875265}
   - component: {fileID: 1590875266}
+  - component: {fileID: 1590875267}
   m_Layer: 0
   m_Name: Lander (Behaviour)
   m_TagString: Untagged
@@ -748,6 +749,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.963333, y: 1.6600106}
   m_EdgeRadius: 0
+--- !u!114 &1590875267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1590875263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b963f3288ccba3c4c9e514e30c101759, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Lander
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
