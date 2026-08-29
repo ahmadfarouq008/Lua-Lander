@@ -1,15 +1,12 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class Lander : MonoBehaviour
-{
+public class Lander : MonoBehaviour {
 
-    private void Start()
-    {
-        Debug.Log("Start");
-    }
-    
-    private void Update()
-    {
-        Debug.Log("Update");
+    private void Update() {
+
+       if (Keyboard.current.upArrowKey.isPressed){
+        Debug.Log("Up.");
+       }
     }
 }
