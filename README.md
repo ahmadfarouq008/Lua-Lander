@@ -7,19 +7,20 @@
 [![Language](https://img.shields.io/badge/C%23-Code-green?logo=csharp)](https://learn.microsoft.com/en-us/dotnet/csharp/)
 [![Course](https://img.shields.io/badge/Course-Code%20Monkey-orange)](https://www.youtube.com/watch?v=nGKd4yTP3M8)
 
-**Live Demo / Gameplay GIF:** _(Coming after Lander movement)_
+### 🚀 Live Demo
+<img width="640" height="314" alt="Image" src="https://github.com/user-attachments/assets/8ae7d51e-3bc7-4af8-a36d-1f3f495517a9" />
 
-![Gameplay](https://via.placeholder.com/800x400?text=Add+Gameplay+GIF+after+Part+3)
+*Lander falling with gravity, colliding with floor. Logic/Visual separation + Bloom.*
 
 ### 📖 About The Project
 This is not a tutorial copy-paste. I am documenting my journey from zero to a playable Unity 2D game, with clean Git history and incremental features.
 
 **Goal:** Build a portfolio-ready 2D game and understand core Unity architecture.
 
-### 🛠️ Tech Stack
+### 🛠 Tech Stack
 - **Engine:** Unity 6.5 (6000.2) - URP 2D Renderer
 - **Language:** C#
-- **Core Systems:** 2D Physics (Rigidbody2D), Volume Framework, Post Processing
+- **Core Systems:** 2D Physics (Rigidbody2D, BoxCollider2D), Volume Framework, Post Processing (Bloom, Vignette)
 - **Tools:** Git, Git LFS, GitHub
 
 ### 🧠 Key Learnings So Far
@@ -43,20 +44,31 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - Volume Profile = asset that holds Bloom, Vignette overrides
 - Camera must have Post Processing enabled to see effects
 - Bloom = glow on bright pixels, Vignette = dark edges for focus
-- Cleaned test scene (lander, fuel, coin) - test then delete for clean start
+- Cleaned test scene after testing
 
-> **Current Script:** `Testing.cs` + Post Processing setup done. Scene is now clean and ready for proper Lander creation.
+#### ✅ Part 3: Create Lander [01:05:00]
+- Logic/Visual separation pattern: Parent (1,1,1) = Rigidbody2D + BoxCollider2D, Child = SpriteRenderer
+- Rigidbody2D for gravity, BoxCollider2D for collision shape
+- Collider slightly smaller than sprite = better game feel / forgiveness
+- Never mix 2D and 3D physics - BoxCollider + Rigidbody2D = no collision
+- Edit Collider tool to resize collider visually
+- Keep logic parent scale at (1,1,1) to avoid physics bugs
+
+> **Current State:** Lander falls with gravity and collides with floor. Post processing working. Ready for input & thrust.
 
 ### 🎮 Features Implemented
 - [x] URP 2D Project Setup in Unity 6.5
 - [x] Editor & Console Configuration
 - [x] Import Free Assets & Setup Post Processing (Global Volume, Bloom, Vignette)
-- [ ] Lander Movement & Physics (Next - Part 3)
+- [x] Lander Creation - Logic/Visual Separation with Rigidbody2D + BoxCollider2D
+- [x] Floor Collision Setup
+- [ ] Lander Movement & Input System (Next)
 - [ ] Terrain with SpriteShape
 - [ ] Landing Detection & Crash Logic
 - [ ] UI, Fuel, Coins, Levels
 
-### 🕹️ Controls
-_(Will update after input lecture)_
+### 🕹 Controls
+- Currently: Gravity only (Rigidbody2D)
+- Next: WAD / Arrow Keys for Thrust & Rotate
 
 ### 📁 Project Structure
