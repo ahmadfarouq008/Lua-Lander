@@ -14,20 +14,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentVersion: 1.00
   subtype: lunarLanderFree
-  lastShownTimestamp: 1787856270
+  lastShownTimestamp: 1788013511
   lastUpdateResponse:
     version: 1.00
     versionUrl: https://unitycodemonkey.com
-  checkedLastUpdateTimestamp: 1787856270
+  checkedLastUpdateTimestamp: 1788013511
   lastQOTDResponse:
-    questionId: 336
-    questionText: What Types can you natively store with PlayerPrefs?
-    answerA: Anything
-    answerB: string, int, float, bool
-    answerC: string, int, float
-    answerD: 
+    questionId: 337
+    questionText: Which namespace do we need to use File.WriteAllText()?
+    answerA: using System;
+    answerB: using UnityEngine;
+    answerC: using System.IO;
+    answerD: using UnityEngine.UI;
     answerE: 
-  lastQotdTimestamp: 1787856270
+  lastQotdTimestamp: 1788013511
   lastDynamicHeaderResponse:
     topImageUrl: https://codemonkeyexternal.blob.core.windows.net/external/Misc/summer2025CodeMonkeyBundle_EndsSoon.png
     topText: Get 80% OFF on ALL my Courses and Games!!! (ENDS AUGUST)
@@ -35,11 +35,11 @@ MonoBehaviour:
     bottomText: DONT MISS the latest important trends, sign up for my FREE Weekly
       Newsletter!
     bottomLink: gamedevreport
-  lastDynamicHeaderTimestamp: 1787856270
+  lastDynamicHeaderTimestamp: 1788013511
   websiteLatestMessage:
     text: <a href="https://cmonkey.co/freecourses">Check out all my FREE courses!
       Click here!</a>
-  websiteLatestMessageTimestamp: 1787856270
+  websiteLatestMessageTimestamp: 1788013511
   websiteLatestVideos:
     videos:
     - youTubeId: 2QKVo8m5ozQ
@@ -51,4 +51,4 @@ MonoBehaviour:
       title: The SECRET WEAPON making Unity 7 AWESOME - CoreCLR Explained
     - youTubeId: xsQTCKSHte8
       title: TOP 10 NEW Games, Made with Unity! (JULY 2026)
-  websiteLatestVideosTimestamp: 1787856270
+  websiteLatestVideosTimestamp: 1788013511
