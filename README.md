@@ -8,9 +8,9 @@
 [![Course](https://img.shields.io/badge/Course-Code%20Monkey-orange)](https://www.youtube.com/watch?v=nGKd4yTP3M8)
 
 ### 🚀 Live Demo
-<img width="640" height="314" alt="Image" src="https://github.com/user-attachments/assets/8ae7d51e-3bc7-4af8-a36d-1f3f495517a9" />
+<img width="100%" alt="Lander Physics - Rigidbody2D + Bloom" src="https://github.com/user-attachments/assets/8ae7d51e-3bc7-4af8-a36d-1f3f495517a9" />
 
-*Lander falling with gravity, colliding with floor. Logic/Visual separation + Bloom.*
+*Lander falling with gravity, colliding with floor. Logic/Visual separation + Bloom + Input System ready.*
 
 ### 📖 About The Project
 This is not a tutorial copy-paste. I am documenting my journey from zero to a playable Unity 2D game, with clean Git history and incremental features.
@@ -20,7 +20,7 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 ### 🛠 Tech Stack
 - **Engine:** Unity 6.5 (6000.2) - URP 2D Renderer
 - **Language:** C#
-- **Core Systems:** 2D Physics (Rigidbody2D, BoxCollider2D), Volume Framework, Post Processing (Bloom, Vignette)
+- **Core Systems:** 2D Physics (Rigidbody2D, BoxCollider2D), New Input System, Volume Framework, Post Processing
 - **Tools:** Git, Git LFS, GitHub
 
 ### 🧠 Key Learnings So Far
@@ -44,31 +44,62 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - Volume Profile = asset that holds Bloom, Vignette overrides
 - Camera must have Post Processing enabled to see effects
 - Bloom = glow on bright pixels, Vignette = dark edges for focus
-- Cleaned test scene after testing
 
 #### ✅ Part 3: Create Lander [01:05:00]
 - Logic/Visual separation pattern: Parent (1,1,1) = Rigidbody2D + BoxCollider2D, Child = SpriteRenderer
 - Rigidbody2D for gravity, BoxCollider2D for collision shape
-- Collider slightly smaller than sprite = better game feel / forgiveness
-- Never mix 2D and 3D physics - BoxCollider + Rigidbody2D = no collision
-- Edit Collider tool to resize collider visually
+- Collider slightly smaller than sprite = better game feel
+- Never mix 2D and 3D physics
 - Keep logic parent scale at (1,1,1) to avoid physics bugs
 
-> **Current State:** Lander falls with gravity and collides with floor. Post processing working. Ready for input & thrust.
+#### ✅ Part 4: C# Basics, Player Input [01:28:00]
+- `Update()` = runs every frame, `Start()` = called once
+- `private` vs `public`: private = only this class, public = other scripts can access
+- Explicit `private` for Start/Update = clean code, encapsulation
+- Unity can call private Start/Update via reflection
+- `Debug.Log()` not showing? Script not attached, object inactive, Collapse ON
+- Remove empty Start() to save performance
+- New Input System vs Old Input Manager: Old = `Input.GetKey()`, New = `Keyboard.current.key.isPressed`
+- Need `using UnityEngine.InputSystem;` namespace
+- Must enable New Input System in Project Settings + Package Manager
+- `Keyboard.current.upArrowKey.isPressed` = checks if Up Arrow held
+- Attach logic scripts to parent not child
+- VSync OFF in Game View during dev
+
+> **Current State:** Lander with physics + Input System setup complete. Reading arrow input. Ready to add thrust forces.
 
 ### 🎮 Features Implemented
 - [x] URP 2D Project Setup in Unity 6.5
 - [x] Editor & Console Configuration
-- [x] Import Free Assets & Setup Post Processing (Global Volume, Bloom, Vignette)
-- [x] Lander Creation - Logic/Visual Separation with Rigidbody2D + BoxCollider2D
+- [x] Import Free Assets & Setup Post Processing
+- [x] Lander Creation - Rigidbody2D + BoxCollider2D
 - [x] Floor Collision Setup
-- [ ] Lander Movement & Input System (Next)
+- [x] C# Basics - Access Modifiers, Start/Update Lifecycle
+- [x] New Input System Setup & Keyboard Input Reading
+- [ ] Lander Thrust & Rotation Physics (Next)
 - [ ] Terrain with SpriteShape
 - [ ] Landing Detection & Crash Logic
 - [ ] UI, Fuel, Coins, Levels
 
 ### 🕹 Controls
-- Currently: Gravity only (Rigidbody2D)
-- Next: WAD / Arrow Keys for Thrust & Rotate
+- **Up Arrow / W** - Thrust (coming next)
+- **Left/Right Arrow / A/D** - Rotate (coming next)
 
 ### 📁 Project Structure
+Assets/
+├── _Project/Scenes/SampleScene
+├── CodeMonkey/Free Lander Assets
+└── Scripts/
+    ├── Testing.cs
+    └── Lander.cs - Input reading with new Input System
+
+### 🚀 How to Run
+1. Clone repo
+2. Open with Unity 6000.2+
+3. Open SampleScene - Press Play
+
+### 🗺️ Next Up
+- **Part 5: Lander Movement** -> AddForce for thrust, AddTorque for rotation
+
+### 👨‍💻 Author
+**Ahmad Farooq** - Aspiring Unity Developer
