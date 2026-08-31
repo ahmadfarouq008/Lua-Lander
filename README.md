@@ -15,7 +15,7 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 ### 🛠 Tech Stack
 - **Engine:** Unity 6.5 (6000.2) - URP 2D Renderer
 - **Language:** C#
-- **Core Systems:** 2D Physics (Rigidbody2D, BoxCollider2D, PolygonCollider2D), SpriteShape, New Input System, Volume Framework
+- **Core Systems:** 2D Physics (Rigidbody2D, BoxCollider2D, PolygonCollider2D), SpriteShape, Cinemachine 3.x, New Input System, Volume Framework
 - **Tools:** Git, Git LFS, GitHub
 
 ### 🧠 Key Learnings So Far
@@ -35,7 +35,7 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - Logic/Visual separation: Parent (1,1,1) = Rigidbody2D + BoxCollider2D, Child = SpriteRenderer
 - Collider smaller than sprite for better game feel
 
-### 🚀 Live Demo 
+### 🚀 Live Demo
 <img width="100%" alt="Lander Physics - Rigidbody2D + Bloom" src="https://github.com/user-attachments/assets/8ae7d51e-3bc7-4af8-a36d-1f3f495517a9" />
 
 *Lander falling with gravity, colliding with floor. Logic/Visual separation + Bloom + Input System ready.*
@@ -51,7 +51,7 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - Cache Rigidbody in `Awake()`, use `[SerializeField]` not magic numbers
 - Linear Damping 0.7 + Angular Damping 5 = playable control
 
-### 🚀 Live Demo 
+### 🚀 Live Demo
 <img width="480" height="346" alt="Image" src="https://github.com/user-attachments/assets/cdd6d676-74e7-4bea-ba26-008bbeede528" />
 
 *Lander with full physics control - Thrust where tip/nose points + rotation. FixedUpdate + Damping.*
@@ -67,7 +67,21 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - Flat points = landing pads, angled points = crash zones
 - Keep terrain as Closed Shape + collider IsTrigger = OFF
 
-> **Current State:** Terrain built with SpriteShape + PolygonCollider2D. Lander can fly, collide, and land on flat pads. Ready for landing detection logic.
+#### ✅ Part 7: Cinemachine Camera Follow [02:20:00]
+- Unity 6.5 uses **Cinemachine 3.x** - called **Cinemachine Camera** 
+- Install from Package Manager > Cinemachine
+- Main Camera gets **Cinemachine Brain** - it takes control
+- Create **Cinemachine Camera** GameObject, add **Cinemachine Position Composer** extension
+- Set **Tracking Target** = Lander, camera now follows
+- DeadZone inside Position Composer - Width/Height 0.1 = small movements ignored, no jitter
+- Lens > Orthographic Size on Cinemachine Camera controls zoom - don't edit Main Camera, it gets overwritten
+- Can have multiple Cinemachine Cameras with Priority for switching
+
+### 🚀 Live Demo
+
+<img width="480" height="214" alt="Image" src="https://github.com/user-attachments/assets/6a4a42d3-d415-40fd-8ec4-4ce1f8495297" />
+
+> **Current State:** Terrain + Cinemachine follow working. Camera smoothly follows Lander with DeadZone. Ready for landing detection logic.
 
 ### 🎮 Features Implemented
 - [x] URP 2D Project Setup in Unity 6.5
@@ -76,6 +90,7 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - [x] New Input System Setup
 - [x] Lander Thrust & Rotation Physics - AddForce + AddTorque + Damping
 - [x] Terrain with SpriteShape + PolygonCollider2D + Angle Ranges
+- [x] Cinemachine Camera Follow - Cinemachine Camera + Position Composer + Tracking Target + DeadZone
 - [ ] Landing Detection & Crash Logic (Next)
 - [ ] UI, Fuel, Coins, Levels
 
