@@ -2,10 +2,10 @@
 
 > Learning Unity 6.5 by building a complete 2D physics-based lunar landing game. Following Code Monkey's "Learn Unity 2D - Complete Beginner Course 2026".
 
-[![Unity](https://img.shields.io/badge/Unity-6000.2%20%2F%206.5-black?logo=unity)](https://unity.com/)
-[![URP](https://img.shields.io/badge/Render%20Pipeline-URP%202D-blue)](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@latest)
-[![Language](https://img.shields.io/badge/C%23-Code-green?logo=csharp)](https://learn.microsoft.com/en-us/dotnet/csharp/)
-[![Course](https://img.shields.io/badge/Course-Code%20Monkey-orange)](https://www.youtube.com/watch?v=nGKd4yTP3M8)
+[[Unity](https://img.shields.io/badge/Unity-6000.2%20%2F%206.5-black?logo=unity)](https://unity.com/)
+[[URP](https://img.shields.io/badge/Render%20Pipeline-URP%202D-blue)](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@latest)
+[[Language](https://img.shields.io/badge/C%23-Code-green?logo=csharp)](https://learn.microsoft.com/en-us/dotnet/csharp/)
+[[Course](https://img.shields.io/badge/Course-Code%20Monkey-orange)](https://www.youtube.com/watch?v=nGKd4yTP3M8)
 
 ### 📖 About The Project
 This is not a tutorial copy-paste. I am documenting my journey from zero to a playable Unity 2D game, with clean Git history and incremental features.
@@ -15,7 +15,7 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 ### 🛠 Tech Stack
 - **Engine:** Unity 6.5 (6000.2) - URP 2D Renderer
 - **Language:** C#
-- **Core Systems:** 2D Physics (Rigidbody2D, BoxCollider2D, PolygonCollider2D), SpriteShape, Cinemachine 3.x, New Input System, Volume Framework
+- **Core Systems:** 2D Physics (Rigidbody2D, BoxCollider2D, PolygonCollider2D), SpriteShape, Cinemachine 3.x, Sorting Layers, New Input System, Volume Framework
 - **Tools:** Git, Git LFS, GitHub
 
 ### 🧠 Key Learnings So Far
@@ -68,20 +68,28 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - Keep terrain as Closed Shape + collider IsTrigger = OFF
 
 #### ✅ Part 7: Cinemachine Camera Follow [02:20:00]
-- Unity 6.5 uses **Cinemachine 3.x** - called **Cinemachine Camera** 
-- Install from Package Manager > Cinemachine
-- Main Camera gets **Cinemachine Brain** - it takes control
-- Create **Cinemachine Camera** GameObject, add **Cinemachine Position Composer** extension
+- Unity 6.5 uses **Cinemachine 3.x** - called **Cinemachine Camera** (not Virtual Camera)
+- Install from Package Manager > Cinemachine, Main Camera gets **Cinemachine Brain**
+- Create **Cinemachine Camera** + **Cinemachine Position Composer** extension
 - Set **Tracking Target** = Lander, camera now follows
-- DeadZone inside Position Composer - Width/Height 0.1 = small movements ignored, no jitter
-- Lens > Orthographic Size on Cinemachine Camera controls zoom - don't edit Main Camera, it gets overwritten
-- Can have multiple Cinemachine Cameras with Priority for switching
+- DeadZone inside Position Composer - Width/Height 0.1 = no jitter on small hover
+- Lens > Orthographic Size controls zoom - don't edit Main Camera, it gets overwritten
 
 ### 🚀 Live Demo
-
 <img width="480" height="214" alt="Image" src="https://github.com/user-attachments/assets/6a4a42d3-d415-40fd-8ec4-4ce1f8495297" />
 
-> **Current State:** Terrain + Cinemachine follow working. Camera smoothly follows Lander with DeadZone. Ready for landing detection logic.
+#### ✅ Part 8: Background, Sorting Order [02:35:00]
+- **Sorting Layer > Sorting Order** - Layer wins first, then Order inside layer
+- Sorting Layers list: Top = behind, Bottom = front. Created new **Background** layer on top
+- Background: Layer = `Background`, Order = `0`, Draw Mode = `Tiled`, Size = 40x25 (not 500x500 = lag)
+- Terrain: Layer = `Default`, Order = `0` - Default is below Background, so always in front of background
+- Lander: Layer = `Default`, Order = `10` - Same layer as terrain but higher Order = in front
+- Final stack: Background (Background,0) -> Terrain (Default,0) -> Lander (Default,10)
+- Why own layer for background? Guarantees it stays behind even if Default Orders change, no z-fighting
+- Pixels Per Unit = how many pixels = 1 unit - low PPU = huge tiles, high PPU = tiny tiles
+- Z position ignored in URP 2D - only Sorting Layer + Order matters, keep all at Z=0
+
+> **Current State:** Background tiling + Sorting Layers + Cinemachine follow working. Full level visible with terrain, background always behind. Ready for landing detection.
 
 ### 🎮 Features Implemented
 - [x] URP 2D Project Setup in Unity 6.5
@@ -91,6 +99,7 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - [x] Lander Thrust & Rotation Physics - AddForce + AddTorque + Damping
 - [x] Terrain with SpriteShape + PolygonCollider2D + Angle Ranges
 - [x] Cinemachine Camera Follow - Cinemachine Camera + Position Composer + Tracking Target + DeadZone
+- [x] Background Tiling + Sorting Order - Background Layer (0) / Default Terrain (0) / Default Lander (10)
 - [ ] Landing Detection & Crash Logic (Next)
 - [ ] UI, Fuel, Coins, Levels
 
