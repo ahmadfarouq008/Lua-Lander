@@ -14,20 +14,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentVersion: 1.00
   subtype: lunarLanderFree
-  lastShownTimestamp: 1788174527
+  lastShownTimestamp: 1788293616
   lastUpdateResponse:
     version: 1.00
     versionUrl: https://unitycodemonkey.com
-  checkedLastUpdateTimestamp: 1788174527
+  checkedLastUpdateTimestamp: 1788293616
   lastQOTDResponse:
-    questionId: 337
-    questionText: Which namespace do we need to use File.WriteAllText()?
-    answerA: using System;
-    answerB: using UnityEngine;
-    answerC: using System.IO;
-    answerD: using UnityEngine.UI;
+    questionId: 338
+    questionText: What will happen on January 19, 2038 at 03:14:07?
+    answerA: Armagedon
+    answerB: End of Unix Time
+    answerC: Half-Life 3 release date
+    answerD: 
     answerE: 
-  lastQotdTimestamp: 1788174527
+  lastQotdTimestamp: 1788293616
   lastDynamicHeaderResponse:
     topImageUrl: https://codemonkeyexternal.blob.core.windows.net/external/Misc/summer2025CodeMonkeyBundle_EndsSoon.png
     topText: Get 80% OFF on ALL my Courses and Games!!! (ENDS AUGUST)
@@ -35,13 +35,15 @@ MonoBehaviour:
     bottomText: DONT MISS the latest important trends, sign up for my FREE Weekly
       Newsletter!
     bottomLink: gamedevreport
-  lastDynamicHeaderTimestamp: 1788174527
+  lastDynamicHeaderTimestamp: 1788293616
   websiteLatestMessage:
     text: <a href="https://cmonkey.co/freecourses">Check out all my FREE courses!
       Click here!</a>
-  websiteLatestMessageTimestamp: 1788174527
+  websiteLatestMessageTimestamp: 1788293616
   websiteLatestVideos:
     videos:
+    - youTubeId: 8xj9IEFRgKo
+      title: THIS is how you go from BEGINNER to ADVANCED!
     - youTubeId: XJBrzk7PR4o
       title: DON'T sell your game for $100!
     - youTubeId: 2QKVo8m5ozQ
@@ -49,6 +51,4 @@ MonoBehaviour:
         that)
     - youTubeId: VZCaQSzsGwU
       title: TOP 10 FREE NEW Assets AUGUST 2026!
-    - youTubeId: Hwpbh2fDPlE
-      title: The SECRET WEAPON making Unity 7 AWESOME - CoreCLR Explained
-  websiteLatestVideosTimestamp: 1788174527
+  websiteLatestVideosTimestamp: 1788293616
