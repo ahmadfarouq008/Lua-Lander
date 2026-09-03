@@ -89,7 +89,14 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - Pixels Per Unit = how many pixels = 1 unit - low PPU = huge tiles, high PPU = tiny tiles
 - Z position ignored in URP 2D - only Sorting Layer + Order matters, keep all at Z=0
 
-> **Current State:** Background tiling + Sorting Layers + Cinemachine follow working. Full level visible with terrain, background always behind. Ready for landing detection.
+#### ✅ Part 9: Landing Detection & Crash Logic [02:50:00]
+- **Physics callbacks:** `OnCollisionEnter2D(Collision2D collision)` for solid hits, `OnTriggerEnter2D` for triggers - must have `IsTrigger = OFF` for collision
+- **Requirements for collision:** Both objects need `Collider2D` + one needs `Rigidbody2D` `Dynamic`. If either is `IsTrigger = ON`, collision never fires
+- **Speed check:** `collision.relativeVelocity.magnitude` = impact speed. `> 4f` = too hard / crash, `< 4f` = soft / success
+- **Spelling matters:** `OnCollisionEnter2D` not `OnCollisioEnter2D` - VS Code shows `0 references` if Unity doesn't recognize it = method never called
+- **Location:** Callback must be inside `Lander` class but outside `FixedUpdate()`, attached to Lander GameObject that has Rigidbody2D
+
+> **Current State:** Landing detection working with speed check - hard landing vs soft landing logs in Console. Ready for landing pads, crash effects and game states.
 
 ### 🎮 Features Implemented
 - [x] URP 2D Project Setup in Unity 6.5
@@ -100,8 +107,8 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - [x] Terrain with SpriteShape + PolygonCollider2D + Angle Ranges
 - [x] Cinemachine Camera Follow - Cinemachine Camera + Position Composer + Tracking Target + DeadZone
 - [x] Background Tiling + Sorting Order - Background Layer (0) / Default Terrain (0) / Default Lander (10)
-- [ ] Landing Detection & Crash Logic (Next)
-- [ ] UI, Fuel, Coins, Levels
+- [x] Landing Detection & Crash Logic - OnCollisionEnter2D + relativeVelocity.magnitude + Debug.Log
+- [ ] Landing Pad Tag Check, UI, Fuel, Coins, Levels
 
 ### 🕹 Controls
 - **Up Arrow / W** - Thrust forward (where nose points)
