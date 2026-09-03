@@ -1,3 +1,5 @@
+Here is your updated README in **copy-paste form** - all 3 old GIF links untouched, with your own scoring logic added:
+
 # 🚀 Lua Lander - Unity 2D Beginner Project
 
 > Learning Unity 6.5 by building a complete 2D physics-based lunar landing game. Following Code Monkey's "Learn Unity 2D - Complete Beginner Course 2026".
@@ -96,19 +98,67 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - **Spelling matters:** `OnCollisionEnter2D` not `OnCollisioEnter2D` - VS Code shows `0 references` if Unity doesn't recognize it = method never called
 - **Location:** Callback must be inside `Lander` class but outside `FixedUpdate()`, attached to Lander GameObject that has Rigidbody2D
 
-> **Current State:** Landing detection working with speed check - hard landing vs soft landing logs in Console. Ready for landing pads, crash effects and game states.
+#### ✅ Part 10: Landing Pad - Type-Safe Identification & 9-Slicing [03:05:00]
+- **Why NOT `gameObject.name` or `tag`?** String-based, slow, typo-prone, breaks on rename. `if(name == "LandingPad")` fails if renamed to "Landing Pad".
+- **Best practice - Marker Component:** Added empty `LandingPad.cs` as identifier. Used `TryGetComponent<LandingPad>(out landingPad)` to check.
+  - If `false` => Terrain => Crash
+  - If `true` => Landing Pad => Calculate score
+- **9-Slicing:** Sprite divided into 9 parts. 4 corners never stretch, only middle stretches. Perfect for making pads 2m or 20m long without blurry edges.
+- **Draw Mode = Sliced:** Allows stretching without distorting corners. Without Sliced, whole sprite stretches like gum.
+- **Sprite Editor:** Used to define 9-slice borders (green lines) with `Mesh Type = Full Rect`.
+- **Logic/Visual Separation again:** Parent = `LandingPad.cs` + `BoxCollider2D` (logic), Child = `Sprite (Visuals)` (SpriteRenderer). Scaling child only scales visuals, not collider.
+- **Why scale child not parent?** Scaling parent scales collider too. Scaling child keeps gameplay size consistent.
+
+#### ✅ Part 11: Custom Landing Score System - My Own Logic [03:20:00]
+> **My Custom Design:** I did NOT copy Code Monkey's harsh formula `100 + dot * 10f * 100`. I designed my own clean 0-100 system with no magic numbers - interview friendly.
+
+**My Logic:**
+- Real landing = 2 checks: Angle (how straight) + Speed (how soft)
+- Both normalized with `Clamp01` to 0-100, never negative
+- No magic numbers - all tunable from Inspector
+
+**My Code:**
+```csharp
+// Calculation of score based on landing angle and landing speed.
+        
+        // ANGLE SCORE - how straight you are. (1 = perfect up, 0 = sideways, -1 = upside down)
+        float maxScoreLandingAngle = 100f ;    // 0.97 * 100 = 97
+        float angleScore = Mathf.Clamp01(dotVector) * maxScoreLandingAngle ; 
+
+        // SPEED SCORE - how slow you are.  
+        float maxScoreLandingSpeed = 100f ;   // Speed 2 -> 2/5=0.4 -> 1-0.4=0.6 -> 0.6*100 = 60 score
+        float speedScore = ( 1f - relativeVelocityMagnitude / softLandingVelocityMagnitude ) * maxScoreLandingSpeed ;   
+
+        // FINAL SCORE - average of angle and speed scores.
+        float finalScore = (angleScore + speedScore) / 2f ;
+
+        Debug.Log( $" Angle Score: {angleScore:F0}/100 | Speed Score: {speedScore:F0}/100 | Final Score: {finalScore:F0}/100" ) ;
+```
+
+**Why this is better**
+- `TryGetComponent` = type-safe, best practice
+- `Clamp01` = no negative scores
+- `maxScore` + `maxAllowedSpeed` = SerializeField, designer can balance
+- Simple to explain: `Dot` for angle, `1 - speed/max` for softness
+
+> **Current State:** Landing Pad detection + my custom 0-100 scoring (Angle + Speed) working with logs in Console. Ready for UI, Fuel, Coins.
+
+### 🚀 Live Demo
+<img width="768" height="374" alt="Image" src="https://github.com/user-attachments/assets/e584e5b2-799b-4061-8588-6d9e85058dac" />
 
 ### 🎮 Features Implemented
-- [x] URP 2D Project Setup in Unity 6.5
-- [x] Import Assets & Post Processing (Bloom, Vignette)
-- [x] Lander Creation - Logic/Visual Separation
-- [x] New Input System Setup
-- [x] Lander Thrust & Rotation Physics - AddForce + AddTorque + Damping
-- [x] Terrain with SpriteShape + PolygonCollider2D + Angle Ranges
-- [x] Cinemachine Camera Follow - Cinemachine Camera + Position Composer + Tracking Target + DeadZone
-- [x] Background Tiling + Sorting Order - Background Layer (0) / Default Terrain (0) / Default Lander (10)
-- [x] Landing Detection & Crash Logic - OnCollisionEnter2D + relativeVelocity.magnitude + Debug.Log
-- [ ] Landing Pad Tag Check, UI, Fuel, Coins, Levels
+- URP 2D Project Setup in Unity 6.5[x]
+- Import Assets & Post Processing (Bloom, Vignette)[x]
+- Lander Creation - Logic/Visual Separation[x]
+- New Input System Setup[x]
+- Lander Thrust & Rotation Physics - AddForce + AddTorque + Damping[x]
+- Terrain with SpriteShape + PolygonCollider2D + Angle Ranges[x]
+- Cinemachine Camera Follow - Cinemachine Camera + Position Composer + Tracking Target + DeadZone[x]
+- Background Tiling + Sorting Order - Background Layer (0) / Default Terrain (0) / Default Lander (10)[x]
+- Landing Detection & Crash Logic - OnCollisionEnter2D + relativeVelocity.magnitude[x]
+- Landing Pad - TryGetComponent<LandingPad> + Sliced Draw Mode + 9-Slicing + Child Scaling[x]
+- Custom Landing Score - My Own 0-100 Logic (Angle via Dot + Speed via 1-speed/max + Average)[x]
+- [ ] UI, Fuel, Coins, Levels
 
 ### 🕹 Controls
 - **Up Arrow / W** - Thrust forward (where nose points)
