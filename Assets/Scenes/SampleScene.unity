@@ -178,6 +178,7 @@ GameObject:
   m_Component:
   - component: {fileID: 463005409}
   - component: {fileID: 463005410}
+  - component: {fileID: 463005411}
   m_Layer: 0
   m_Name: Landing Pad (Behaviour)
   m_TagString: Untagged
@@ -247,6 +248,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 6.3925266, y: 1.4495466}
   m_EdgeRadius: 0
+--- !u!114 &463005411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 463005408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff45e4d6c72bdb644ac159087fa9127b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LandingPad
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
