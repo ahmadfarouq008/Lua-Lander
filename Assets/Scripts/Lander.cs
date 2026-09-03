@@ -43,7 +43,8 @@ public class Lander : MonoBehaviour {
 
         // now in this space of code line, we get the argument input(speed/hit data), when lander falls and this function is invoked automatically by untiy and argument input (that we got in unity) is stored in collision(parameter) as writen in below line "if" code. 
         float softLandingVelocityMagnitude = 4f ;
-        if (collision.relativeVelocity.magnitude > softLandingVelocityMagnitude ){
+        float relativeVelocityMagnitude = collision.relativeVelocity.magnitude ;
+        if (relativeVelocityMagnitude > softLandingVelocityMagnitude ){
         Debug.Log("Landed too hard!");
         return ;
         }       
