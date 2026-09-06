@@ -650,6 +650,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 325599734205190463, guid: f7782f7c5ab14964f9dfcd0e9d1adfa9, type: 3}
+      propertyPath: scoreMultiplier
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 596533096903323831, guid: f7782f7c5ab14964f9dfcd0e9d1adfa9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 10.22
@@ -1248,6 +1252,10 @@ PrefabInstance:
     - target: {fileID: 838023936650426715, guid: a5dfbe90999d7654c9ee588840cd69b3, type: 3}
       propertyPath: m_Name
       value: Landing Pad (Behaviour)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914480512644766262, guid: a5dfbe90999d7654c9ee588840cd69b3, type: 3}
+      propertyPath: scoreMultiplier
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4220026516413479870, guid: a5dfbe90999d7654c9ee588840cd69b3, type: 3}
       propertyPath: m_LocalPosition.x

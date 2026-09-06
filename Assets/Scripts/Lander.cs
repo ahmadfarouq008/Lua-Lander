@@ -70,10 +70,14 @@ public class Lander : MonoBehaviour {
         float maxScoreLandingSpeed = 100f ;   // Speed 2 -> 2/5=0.4 -> 1-0.4=0.6 -> 0.6*100 = 60 score
         float speedScore = ( 1f - relativeVelocityMagnitude / softLandingVelocityMagnitude ) * maxScoreLandingSpeed ;   // 1f means 100% (Human language ) = 1.0(Computer language) i.e. How much speed is LEFT from 1 (invert) and then we get point(.) somthing value which is then multiplied with 100 to get score in 0-100.(ones to <= hundreds) range.
 
-        // FINAL SCORE - average of angle and speed scores.
-        float finalScore = (angleScore + speedScore) / 2f ;
+        // AVERAGE SCORE - average of angle and speed scores.
+        float averageScore  = (angleScore + speedScore) / 2f ;
 
-        Debug.Log( $" Angle Score: {angleScore:F0}/100 | Speed Score: {speedScore:F0}/100 | Final Score: {finalScore:F0}/100" ) ;
+        // Final Multiplied Score - average score multiplied by the landing pad's score multiplier. e.g. if average score = 80 and landing pad multiplier = 5x then final score =  400 points.
+        int finalScore = Mathf.RoundToInt(averageScore * landingPad.GetScoreMultiplier()) ; // landingPad.GetScoreMultiplier() asks that specific pad (by the help of landingPad variable) "what is your value?"(this function calls the GetScoreMultiplier() in LandingPad.cs ) -> returns the score multiplier for that specific landing pad.
+
+        
+        Debug.Log( $" Angle Score: {angleScore:F0}/100 | Speed Score: {speedScore:F0}/100 | Final Score: {averageScore:F0} x {landingPad.GetScoreMultiplier()} = {finalScore} Points." ) ;  // landingPad.GetScoreMultiplier() means(returns) scoreMultiplier value.
     }
 
 }
