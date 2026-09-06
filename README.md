@@ -1,5 +1,3 @@
-Here is your updated README in **copy-paste form** - all 3 old GIF links untouched, with your own scoring logic added:
-
 # 🚀 Lua Lander - Unity 2D Beginner Project
 
 > Learning Unity 6.5 by building a complete 2D physics-based lunar landing game. Following Code Monkey's "Learn Unity 2D - Complete Beginner Course 2026".
