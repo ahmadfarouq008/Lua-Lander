@@ -118,14 +118,14 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 **My Code:**
 ```csharp
 // Calculation of score based on landing angle and landing speed.
-        
-        // ANGLE SCORE - how straight you are. (1 = perfect up, 0 = sideways, -1 = upside down)
-        float maxScoreLandingAngle = 100f ;    // 0.97 * 100 = 97
-        float angleScore = Mathf.Clamp01(dotVector) * maxScoreLandingAngle ; 
 
-        // SPEED SCORE - how slow you are.  
-        float maxScoreLandingSpeed = 100f ;   // Speed 2 -> 2/5=0.4 -> 1-0.4=0.6 -> 0.6*100 = 60 score
-        float speedScore = ( 1f - relativeVelocityMagnitude / softLandingVelocityMagnitude ) * maxScoreLandingSpeed ;   
+        // ANGLE SCORE - how straight you are. (1 = perfect up, 0 = sideways, -1 = upside down)
+        float maxScoreLandingAngle = 100f ; // 0.97 * 100 = 97
+        float angleScore = Mathf.Clamp01(dotVector) * maxScoreLandingAngle ;
+
+        // SPEED SCORE - how slow you are.
+        float maxScoreLandingSpeed = 100f ; // Speed 2 -> 2/5=0.4 -> 1-0.4=0.6 -> 0.6*100 = 60 score
+        float speedScore = ( 1f - relativeVelocityMagnitude / softLandingVelocityMagnitude ) * maxScoreLandingSpeed ;
 
         // FINAL SCORE - average of angle and speed scores.
         float finalScore = (angleScore + speedScore) / 2f ;
@@ -139,10 +139,45 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - `maxScore` + `maxAllowedSpeed` = SerializeField, designer can balance
 - Simple to explain: `Dot` for angle, `1 - speed/max` for softness
 
-> **Current State:** Landing Pad detection + my custom 0-100 scoring (Angle + Speed) working with logs in Console. Ready for UI, Fuel, Coins.
-
 ### 🚀 Live Demo
 <img width="768" height="374" alt="Image" src="https://github.com/user-attachments/assets/e584e5b2-799b-4061-8588-6d9e85058dac" />
+
+#### ✅ Part 12: Score Multiplier - Encapsulation, Prefab Variants & Visuals [03:35:00]
+- **Encapsulation:** `[SerializeField] private int scoreMultiplier` instead of `public` - shows in Inspector but other scripts can't cheat it with `scoreMultiplier = 9999`
+- **Getter Method:** `public int GetScoreMultiplier()` = READ-ONLY access. Lander and Visual can read, but can't write. Interview answer: "Encapsulation + single source of truth"
+- **Why NOT public field?** Public = anyone can modify. Private + getter = you control. Later you can add `Mathf.Clamp` inside getter without breaking other scripts
+- **Prefab Variants:** Base `LandingPad` prefab [collider + LandingPad.cs] -> Variant `LandingPad_x1` [multiplier=1, green] and `LandingPad_x5` [multiplier=5, red]. Fix collider in base = all variants auto update. Duplicating GameObjects = you fix 10 times
+- **LandingPadVisual.cs - Separation of Concerns:** `LandingPad.cs` = LOGIC (how much worth), `LandingPadVisual.cs` = VISUAL (how to display x5). Logic never knows about TextMeshPro
+- **TextMeshPro in World Space:** Used `TextMeshPro - Text (TMP)` component to show `x5` in 3D space. Legacy `Text` is blurry, TMP is sharp and standard now
+- **Single Source of Truth:** `Awake() { GetComponent<LandingPad>().GetScoreMultiplier() -> text = "x" + value }`. Change multiplier to 10 in Inspector = text auto becomes x10. No manual double typing, no bug
+- **Reference Assignment:** `GetComponent` only finds script on SAME GameObject. `TextMeshPro` is on CHILD `Text (TMP)` object, so can't auto-find. Need `[SerializeField] private TextMeshPro scoreMultiplierTextMesh` and drag child into slot. If `None` = `NullReferenceException: Object reference not set`
+- **NullRef Fix:** Assign child `Text (TMP)` to `Score Multiplier Text` field in Inspector for each pad. `GetComponentInChildren<TextMeshPro>()` is alternative to auto-find child
+- **Final Scoring with Multiplier:** `finalScore = averageScore * landingPad.GetScoreMultiplier()` - easy pad x1, hard pad x5 = risk/reward
+
+> **Current State:** Score multiplier system working - easy pad x1 and hard pad x5 with dynamic TMP text via `LandingPadVisual.cs`. Single source of truth + Prefab Variants + Encapsulation. Ready for UI, Fuel, Coins.
+
+**My Logic:**
+- Used the score multiplier in such a way that , if lander lands on x5 pad (hard and small) then the average score is multiplied by 5 as final multiplied score/points.
+- The speed and angle points/score shows the quality of landing out of 100.
+- For Example (Massage in console): Angle Score: 100/100 | Speed Score: 45/100 | Final Score: 73 x 5 = 363 Points.
+
+**My Code:**
+```csharp
+
+ float maxScoreLandingAngle = 100f ;   
+        float angleScore = Mathf.Clamp01(dotVector) * maxScoreLandingAngle ; 
+
+        float maxScoreLandingSpeed = 100f ;  
+        float speedScore = ( 1f - relativeVelocityMagnitude / softLandingVelocityMagnitude ) * maxScoreLandingSpeed ;  
+
+        float averageScore  = (angleScore + speedScore) / 2f ;
+
+        int finalScore = Mathf.RoundToInt(averageScore * landingPad.GetScoreMultiplier()) ;
+        
+        Debug.Log( $" Angle Score: {angleScore:F0}/100 | Speed Score: {speedScore:F0}/100 | Final Score: {averageScore:F0} x {landingPad.GetScoreMultiplier()} = {finalScore} Points." ) ; 
+```
+### 🚀 Live Demo
+<img width="800" height="393" alt="Image" src="https://github.com/user-attachments/assets/8fbb3ae6-e689-41a8-a067-798d5f73ba0e" />
 
 ### 🎮 Features Implemented
 - URP 2D Project Setup in Unity 6.5[x]
@@ -156,6 +191,7 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - Landing Detection & Crash Logic - OnCollisionEnter2D + relativeVelocity.magnitude[x]
 - Landing Pad - TryGetComponent<LandingPad> + Sliced Draw Mode + 9-Slicing + Child Scaling[x]
 - Custom Landing Score - My Own 0-100 Logic (Angle via Dot + Speed via 1-speed/max + Average)[x]
+- Score Multiplier - Encapsulation private + GetScoreMultiplier() Getter + LandingPadVisuals + Prefab Variants (x1, x5) + TextMeshPro Dynamic Text[SerializeField][x]
 - [ ] UI, Fuel, Coins, Levels
 
 ### 🕹 Controls
