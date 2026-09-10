@@ -5,6 +5,12 @@ using UnityEngine.InputSystem;
 
 public class Lander : MonoBehaviour {
 
+    // Events declared for thruster forces, which can be subscribed to by other scripts (like LanderVisuals) to react to these forces being applied :
+    public event EventHandler OnUpForce ;
+    public event EventHandler OnRightForce ;
+    public event EventHandler OnLeftForce ;
+    public event EventHandler OnBeforeForce ;
+
     private Rigidbody2D LanderRigidbody2D ;
 
     private void Awake() {
@@ -12,20 +18,28 @@ public class Lander : MonoBehaviour {
         LanderRigidbody2D = GetComponent<Rigidbody2D>() ;
     }
     private void FixedUpdate(){
+        OnBeforeForce?.Invoke(this, EventArgs.Empty) ;                             // fire off / invoke the OnBeforeForce event before checking for any thruster forces being applied. This allows any subscribers/listeners to prepare for the upcoming forces.
+
         if (Keyboard.current.upArrowKey.isPressed ){
 
             float force = 700f ;
             LanderRigidbody2D.AddForce(force * transform.up * Time.deltaTime);
+
+            OnUpForce?.Invoke(this, EventArgs.Empty) ;                             // fire off / invoke the OnUpForce event when the up arrow key is pressed and the upward force is applied. This allows any subscribers/listeners to react to the upward force being applied.
         }
         if (Keyboard.current.rightArrowKey.isPressed){
 
             float turnSpeed = -100f ;
             LanderRigidbody2D.AddTorque(turnSpeed * Time.deltaTime);
+
+            OnRightForce?.Invoke(this, EventArgs.Empty) ;                          // fire off / invoke the OnRightForce event when the right arrow key is pressed and the rightward torque is applied. This allows any subscribers/listeners to react to the rightward force being applied.
         }
         if (Keyboard.current.leftArrowKey.isPressed){
 
             float turnSpeed = +100f ;
             LanderRigidbody2D.AddTorque(turnSpeed * Time.deltaTime);
+
+            OnLeftForce?.Invoke(this, EventArgs.Empty) ;                           // fire off / invoke the OnLeftForce event when the left arrow key is pressed and the leftward torque is applied. This allows any subscribers/listeners to react to the leftward force being applied.
         }
     }
     
