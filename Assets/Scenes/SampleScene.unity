@@ -654,6 +654,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7777506112856376982, guid: 491bc9f68306cad40a65002e796205eb, type: 3}
   m_PrefabInstance: {fileID: 1953548387}
   m_PrefabAsset: {fileID: 0}
+--- !u!198 &939454699 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 5626142120532356289, guid: 491bc9f68306cad40a65002e796205eb, type: 3}
+  m_PrefabInstance: {fileID: 1953548387}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1083561845
 GameObject:
   m_ObjectHideFlags: 0
@@ -830,6 +835,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7777506112856376982, guid: 491bc9f68306cad40a65002e796205eb, type: 3}
   m_PrefabInstance: {fileID: 676676764}
   m_PrefabAsset: {fileID: 0}
+--- !u!198 &1161762215 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 5626142120532356289, guid: 491bc9f68306cad40a65002e796205eb, type: 3}
+  m_PrefabInstance: {fileID: 676676764}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1462621540
 GameObject:
   m_ObjectHideFlags: 0
@@ -934,6 +944,7 @@ GameObject:
   - component: {fileID: 1590875265}
   - component: {fileID: 1590875266}
   - component: {fileID: 1590875267}
+  - component: {fileID: 1590875268}
   m_Layer: 0
   m_Name: Lander (Behaviour)
   m_TagString: Untagged
@@ -1045,9 +1056,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b963f3288ccba3c4c9e514e30c101759, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lander
+--- !u!114 &1590875268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1590875263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 411d803f29144914b92c913fe71beacc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LanderVisuals
+  leftThrusterParticleSystem: {fileID: 1161762215}
+  middleThrusterParticleSystem: {fileID: 939454699}
+  rightThrusterParticleSystem: {fileID: 1742331564}
 --- !u!4 &1742331562 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7777506112856376982, guid: 491bc9f68306cad40a65002e796205eb, type: 3}
+  m_PrefabInstance: {fileID: 286797295}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &1742331564 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 5626142120532356289, guid: 491bc9f68306cad40a65002e796205eb, type: 3}
   m_PrefabInstance: {fileID: 286797295}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1786128721
