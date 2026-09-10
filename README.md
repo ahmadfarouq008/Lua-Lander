@@ -154,30 +154,47 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - **NullRef Fix:** Assign child `Text (TMP)` to `Score Multiplier Text` field in Inspector for each pad. `GetComponentInChildren<TextMeshPro>()` is alternative to auto-find child
 - **Final Scoring with Multiplier:** `finalScore = averageScore * landingPad.GetScoreMultiplier()` - easy pad x1, hard pad x5 = risk/reward
 
-> **Current State:** Score multiplier system working - easy pad x1 and hard pad x5 with dynamic TMP text via `LandingPadVisual.cs`. Single source of truth + Prefab Variants + Encapsulation. Ready for UI, Fuel, Coins.
+> **Status:** Score multiplier system working - easy pad x1 and hard pad x5 with dynamic TMP text via `LandingPadVisual.cs`. Single source of truth + Prefab Variants + Encapsulation.
 
 **My Logic:**
-- Used the score multiplier in such a way that , if lander lands on x5 pad (hard and small) then the average score is multiplied by 5 as final multiplied score/points.
+- Used the score multiplier in such a way that, if lander lands on x5 pad (hard and small) then the average score is multiplied by 5 as final multiplied score/points.
 - The speed and angle points/score shows the quality of landing out of 100.
 - For Example (Massage in console): Angle Score: 100/100 | Speed Score: 45/100 | Final Score: 73 x 5 = 363 Points.
 
 **My Code:**
 ```csharp
 
- float maxScoreLandingAngle = 100f ;   
-        float angleScore = Mathf.Clamp01(dotVector) * maxScoreLandingAngle ; 
+ float maxScoreLandingAngle = 100f ;
+        float angleScore = Mathf.Clamp01(dotVector) * maxScoreLandingAngle ;
 
-        float maxScoreLandingSpeed = 100f ;  
-        float speedScore = ( 1f - relativeVelocityMagnitude / softLandingVelocityMagnitude ) * maxScoreLandingSpeed ;  
+        float maxScoreLandingSpeed = 100f ;
+        float speedScore = ( 1f - relativeVelocityMagnitude / softLandingVelocityMagnitude ) * maxScoreLandingSpeed ;
 
-        float averageScore  = (angleScore + speedScore) / 2f ;
+        float averageScore = (angleScore + speedScore) / 2f ;
 
         int finalScore = Mathf.RoundToInt(averageScore * landingPad.GetScoreMultiplier()) ;
-        
-        Debug.Log( $" Angle Score: {angleScore:F0}/100 | Speed Score: {speedScore:F0}/100 | Final Score: {averageScore:F0} x {landingPad.GetScoreMultiplier()} = {finalScore} Points." ) ; 
+
+        Debug.Log( $" Angle Score: {angleScore:F0}/100 | Speed Score: {speedScore:F0}/100 | Final Score: {averageScore:F0} x {landingPad.GetScoreMultiplier()} = {finalScore} Points." ) ;
 ```
 ### 🚀 Live Demo
 <img width="800" height="393" alt="Image" src="https://github.com/user-attachments/assets/8fbb3ae6-e689-41a8-a067-798d5f73ba0e" />
+
+#### ✅ Part 13: Thruster Visuals - Events / Delegates & EmissionModule [03:50:00]
+- **Why separate `LanderVisuals.cs`?** Single Responsibility + Decoupling. `Lander.cs` = physics `AddForce`/`AddTorque` only, `LanderVisuals.cs` = VFX only. No God class, Lander never knows particles exist.
+- **C# Events / Delegates:** `public event EventHandler OnUpForce;` = broadcast. `EventHandler` = delegate defined as `void EventHandler(object sender, EventArgs e)` - can only hold methods with same signature `(object sender, EventArgs e)`.
+- **event keyword protection:** outsiders can only `+=`/`-=`, only Lander can `Invoke()`. Direct `public Action` would allow anyone to invoke or clear.
+- **Invoke with args:** `OnUpForce?.Invoke(this, EventArgs.Empty);` -> `this` = who fired (Lander instance), `EventArgs.Empty` = no extra data, singleton to avoid `new EventArgs()` garbage. If custom data needed, create `class MyEventArgs : EventArgs`.
+- **Null-conditional `?.`:** `OnUpForce` is `null` if no subscribers. `OnUpForce.Invoke()` = `NullReferenceException`. `OnUpForce?.Invoke()` = safe, does nothing if null.
+- **Listener signature:** `private void Lander_OnUpForce(object sender, System.EventArgs e)` MUST match `EventHandler`. VS auto-generates this name on `+=` TAB. `sender` tells which Lander fired, `e` holds data.
+- **Flow:** `Awake() { lander.OnUpForce += Lander_OnUpForce; }` -> `FixedUpdate() { OnBeforeForce?.Invoke() }` -> `OnUpForce?.Invoke()` -> Listener in Visuals calls helper.
+- **Purpose of `OnBeforeForce`:** Fired first every `FixedUpdate` to turn OFF all thrusters. Then if key pressed, relevant ON event fires. Prevents flames staying ON after key release.
+- **EmissionModule:** `ParticleSystem` = container of modules. `EmissionModule` = controls spawning new particles. `emissionModule.enabled = true/false` = smooth ON/OFF (old particles fade). `particleSystem.Stop()` = instant pop, not good for thrusters.
+- **Why 2 lines?** `EmissionModule` is struct with custom setter. Must do `var module = particleSystem.emission; module.enabled = enabled;`. `particleSystem.emission.enabled = false;` doesn't work in older Unity.
+- **Helper method DRY:** `SetEnabledThrusterParticleSystem(ParticleSystem ps, bool enabled)` takes WHICH particle + true/false, avoids repeating 2 lines 12 times. `OnRightForce` = left thruster ON only, `OnLeftForce` = right thruster ON only, `OnUpForce` = all 3 ON.
+- **Decoupling benefit:** Add Sound, Fuel, Camera Shake later without touching `Lander.cs` - just subscribe new scripts to same events. `Lander` works even if `LanderVisuals` deleted.
+
+### 🚀 Live Demo
+<img width="800" height="560" alt="Image" src="https://github.com/user-attachments/assets/4f13fa13-ceba-4d3d-86ff-4bf01a1b9376" />
 
 ### 🎮 Features Implemented
 - URP 2D Project Setup in Unity 6.5[x]
@@ -192,6 +209,7 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - Landing Pad - TryGetComponent<LandingPad> + Sliced Draw Mode + 9-Slicing + Child Scaling[x]
 - Custom Landing Score - My Own 0-100 Logic (Angle via Dot + Speed via 1-speed/max + Average)[x]
 - Score Multiplier - Encapsulation private + GetScoreMultiplier() Getter + LandingPadVisuals + Prefab Variants (x1, x5) + TextMeshPro Dynamic Text[SerializeField][x]
+- Thruster Visuals - Events/Delegates (OnUpForce, OnLeftForce, OnRightForce, OnBeforeForce) + EventHandler +?.Invoke + EmissionModule.enabled + Decoupled LanderVisuals.cs[x]
 - [ ] UI, Fuel, Coins, Levels
 
 ### 🕹 Controls
