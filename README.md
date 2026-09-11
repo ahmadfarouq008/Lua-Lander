@@ -196,6 +196,21 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 ### 🚀 Live Demo
 <img width="800" height="560" alt="Image" src="https://github.com/user-attachments/assets/4f13fa13-ceba-4d3d-86ff-4bf01a1b9376" />
 
+#### ✅ Part 14: Fuel System & Fuel Pickups [04:05:00]
+- **Fuel System:** Added `fuelAmount` float + `fuelConsumptionAmount`. In `Consume()` -> `fuelAmount -= consumptionAmount * Time.deltaTime`.
+- **Why `Time.deltaTime`?** Frame-rate independence. `1 * Time.deltaTime` = 1 fuel per second, not per frame. 60 FPS and 30 FPS consume same.
+- **Zero Fuel Logic:** `if(fuelAmount <= 0f) return;` - no thrust, no torque, no thruster events. Lander drifts only.
+- **Pickup Collider Non-Solid:** Set `CircleCollider2D / BoxCollider2D` `IsTrigger = ON`. Solid = `IsTrigger = OFF`, Ghost/Trigger = `ON`.
+- **Trigger Detection:** `OnTriggerEnter2D(Collider2D collider)` for pickups. `OnCollisionEnter2D` is for solid hits only. Trigger needs one `Rigidbody2D` to fire.
+- **Clean Identification:** `TryGetComponent(out FuelPickUp fuelPickup)` - type-safe, no `tag` or `name` string checks. 
+- **FuelPickup Script Role:** Marker Component + Data + Self-Destruction.
+- **DestroySelf on Pickup:** `public void DestroySelf(){ Destroy(gameObject); }` placed in `FuelPickup.cs` not in `Lander.cs`. SRP - pickup handles its own death/VFX/sound. Lander just calls it.
+- **If Miss Pickup:** Nothing happens, `OnTriggerEnter2D` never fires, pickup stays.
+- **Tunable:** Can make Prefab Variants `Fuel_Small` x1 and `Fuel_Big` x5.
+  
+### 🚀 Live Demo
+<img width="800" height="652" alt="Image" src="https://github.com/user-attachments/assets/217e95c4-ba2e-45d1-90d7-249f319753f9" />
+
 ### 🎮 Features Implemented
 - URP 2D Project Setup in Unity 6.5[x]
 - Import Assets & Post Processing (Bloom, Vignette)[x]
@@ -210,7 +225,9 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - Custom Landing Score - My Own 0-100 Logic (Angle via Dot + Speed via 1-speed/max + Average)[x]
 - Score Multiplier - Encapsulation private + GetScoreMultiplier() Getter + LandingPadVisuals + Prefab Variants (x1, x5) + TextMeshPro Dynamic Text[SerializeField][x]
 - Thruster Visuals - Events/Delegates (OnUpForce, OnLeftForce, OnRightForce, OnBeforeForce) + EventHandler +?.Invoke + EmissionModule.enabled + Decoupled LanderVisuals.cs[x]
-- [ ] UI, Fuel, Coins, Levels
+- Fuel System - fuelAmount, fuelConsumptionRate * Time.deltaTime, no thrust when 0[x]
+- Fuel Pickups - IsTrigger, OnTriggerEnter2D, TryGetComponent(out FuelPickup fuelPickUp), DestroySelf() in FuelPickup script[x]
+- [ ] UI, Coins, Levels
 
 ### 🕹 Controls
 - **Up Arrow / W** - Thrust forward (where nose points)
