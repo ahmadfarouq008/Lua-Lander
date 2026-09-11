@@ -14,41 +14,45 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentVersion: 1.00
   subtype: lunarLanderFree
-  lastShownTimestamp: 1788293616
+  lastShownTimestamp: 1789143894
   lastUpdateResponse:
     version: 1.00
     versionUrl: https://unitycodemonkey.com
-  checkedLastUpdateTimestamp: 1788293616
+  checkedLastUpdateTimestamp: 1789143894
   lastQOTDResponse:
-    questionId: 338
-    questionText: What will happen on January 19, 2038 at 03:14:07?
-    answerA: Armagedon
-    answerB: End of Unix Time
-    answerC: Half-Life 3 release date
+    questionId: 341
+    questionText: What is the difference between Action&lt;float&gt; and Func&lt;float&gt;
+      ?
+    answerA: Both are the same
+    answerB: Action&#60;float&#62; takes float parameter and Func&#60;float&#62;
+      returns float
+    answerC: Func&#60;float&#62; takes float parameter and Action&#60;float&#62;
+      returns float
     answerD: 
     answerE: 
-  lastQotdTimestamp: 1788293616
+  lastQotdTimestamp: 1789143894
   lastDynamicHeaderResponse:
-    topImageUrl: https://codemonkeyexternal.blob.core.windows.net/external/Misc/summer2025CodeMonkeyBundle_EndsSoon.png
-    topText: Get 80% OFF on ALL my Courses and Games!!! (ENDS AUGUST)
-    topLink: summerbundle
-    bottomText: DONT MISS the latest important trends, sign up for my FREE Weekly
-      Newsletter!
-    bottomLink: gamedevreport
-  lastDynamicHeaderTimestamp: 1788293616
+    topImageUrl: https://codemonkeyexternal.blob.core.windows.net/external/Misc/humbleSep26Maksym.png
+    topText: AWESOME Characters and Weapons 98% OFF! (Modern, Medieval, Fantasy,
+      Sci-Fi, etc)
+    topLink: humblebundle
+    bottomText: Escape Tutorial Hell and level up your skills, try my Practice Lab
+      for FREE!
+    bottomLink: practicelab
+  lastDynamicHeaderTimestamp: 1789143894
   websiteLatestMessage:
     text: <a href="https://cmonkey.co/freecourses">Check out all my FREE courses!
       Click here!</a>
-  websiteLatestMessageTimestamp: 1788293616
+  websiteLatestMessageTimestamp: 1789143894
   websiteLatestVideos:
     videos:
+    - youTubeId: QNXgOuo7-Iw
+      title: TOP 10 FREE NEW Assets SEPTEMBER 2026!
+    - youTubeId: xhOkkGbL3mY
+      title: How to Make your game look AWESOME! (Unity Lighting and Post Processing
+        Tutorial)
+    - youTubeId: HOm1VQLKhX8
+      title: Unity 6.6 is here and it has 3 MASSIVE IMPROVEMENTS!
     - youTubeId: 8xj9IEFRgKo
       title: THIS is how you go from BEGINNER to ADVANCED!
-    - youTubeId: XJBrzk7PR4o
-      title: DON'T sell your game for $100!
-    - youTubeId: 2QKVo8m5ozQ
-      title: The MYTH of the Overnight Game Success! ($10 mil DOESN'T happen like
-        that)
-    - youTubeId: VZCaQSzsGwU
-      title: TOP 10 FREE NEW Assets AUGUST 2026!
-  websiteLatestVideosTimestamp: 1788293616
+  websiteLatestVideosTimestamp: 1789143894

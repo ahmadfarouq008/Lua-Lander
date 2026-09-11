@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Concurrent;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -11,7 +13,9 @@ public class Lander : MonoBehaviour {
     public event EventHandler OnLeftForce ;
     public event EventHandler OnBeforeForce ;
 
+
     private Rigidbody2D LanderRigidbody2D ;
+    private float fuelAmount = 10f;
 
     private void Awake() {
 
@@ -19,6 +23,17 @@ public class Lander : MonoBehaviour {
     }
     private void FixedUpdate(){
         OnBeforeForce?.Invoke(this, EventArgs.Empty) ;                             // fire off / invoke the OnBeforeForce event before checking for any thruster forces being applied. This allows any subscribers/listeners to prepare for the upcoming forces.
+        
+        Debug.Log(fuelAmount) ;
+        
+        if (fuelAmount <= 0f){
+            return;    
+        }
+
+        if (Keyboard.current.upArrowKey.isPressed || Keyboard.current.leftArrowKey.isPressed || Keyboard.current.rightArrowKey.isPressed) {
+            
+            ConsumeFuel();                                             
+        }
 
         if (Keyboard.current.upArrowKey.isPressed ){
 
@@ -92,6 +107,11 @@ public class Lander : MonoBehaviour {
 
         
         Debug.Log( $" Angle Score: {angleScore:F0}/100 | Speed Score: {speedScore:F0}/100 | Final Score: {averageScore:F0} x {landingPad.GetScoreMultiplier()} = {finalScore} Points." ) ;  // landingPad.GetScoreMultiplier() means(returns) scoreMultiplier value.
+    }
+
+    private void ConsumeFuel() {
+        float fuelConsumptionAmount = 1f ; // 1 unit of fuel per second
+        fuelAmount = fuelAmount - fuelConsumptionAmount * Time.deltaTime ;
     }
 
 }
