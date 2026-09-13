@@ -108,14 +108,19 @@ public class Lander : MonoBehaviour {
         
         Debug.Log( $" Angle Score: {angleScore:F0}/100 | Speed Score: {speedScore:F0}/100 | Final Score: {averageScore:F0} x {landingPad.GetScoreMultiplier()} = {finalScore} Points." ) ;  // landingPad.GetScoreMultiplier() means(returns) scoreMultiplier value.
     }
+
     private void OnTriggerEnter2D(Collider2D collider) {                          // Beacause we want to pick up fuel when we collide with fuel pickup object with 'is trigger option' checked, so we use OnTriggerEnter2D function which is invoked automatically by unity when lander collides with fuel pickup object and we get the argument input (collider variable stores the data that something is collided with fuel game object) which is stored in collider variable (parameter) as writen in below line "if" code. 
-        if (collider.gameObject.TryGetComponent(out FuelPickUp fuelPickup)) {     // the TryGetComponent function checks/identifies if the collided object has FuelPickUp script attached to it or not, if yes then it returns true and we get the reference to that fuel pickup game object(i.e. it is idendified that we are collided wth fuel fame object) and we store it in a variable called 'fuelPickup' (which is of type FuelPickUp class) and we can use this variable to access the properties of that fuel pickup game object in future (e.g when we will use multiple fuel pickups in future). If no then it returns false and we do nothing.
+        if (collider.gameObject.TryGetComponent(out FuelPickUp fuelPickup)) {     // the TryGetComponent function checks/identifies if the collided object has FuelPickUp script attached to it or not, if yes then it returns true and we get the reference to that fuel pickup game object(i.e. it is idendified that we are collided with fuel game object) and we store it in a variable called 'fuelPickup' (which is of type FuelPickUp class) and we can use this variable to access the properties of that fuel pickup game object in future (e.g when we will use multiple fuel pickups in future). If no then it returns false and we do nothing.
             float addFuelAmount = 10f ;
             fuelAmount += addFuelAmount ;
-            fuelPickup.DestroySelf() ;  // we call the DestroySelf() function in FuelPickUp.cs public file to destroy the fuel pickup game object after collision with lander. Here fuelPickup is used beacause it is the reference to that fuel pickup game object.
+            fuelPickup.DestroySelf() ;                                            // we call the DestroySelf() function in FuelPickUp.cs public file to destroy the fuel pickup game object after collision with lander. Here fuelPickup is used beacause it is the reference to that fuel pickup game object.
+        }  
+                          
+        if (collider.gameObject.TryGetComponent(out CoinPickUp coinPickUp)) {     // the TryGetComponent function checks/identifies if the collided object has CoinPickUp script attached to it or not, if yes then it returns true and we get the reference to that coin pickup game object(i.e. it is idendified that we are collided with coin game object) and we store it in a variable called 'coinPickUp' (which is of type CoinPickUp class) and we can use this variable to access the properties of that coin pickup game object in future (e.g when we will use multiple coin pickups in future). If no then it returns false and we do nothing.    
+            coinPickUp.DestroySelf() ;                                            // we call the DestroySelf() function in CoinPickUp.cs public file to destroy the coin pickup game object after collision with lander. Here coinPickUp is used beacause it is the reference to that coin pickup game object.
         }  
     }
-
+    
     private void ConsumeFuel() {                                   // By this function we are consuming/decreasing fuel amount per second.e.g. 2 sec = 2 unit of  fuel consumed.
         float fuelConsumptionAmount = 1f ;                         // 1 unit of fuel per second
         fuelAmount -= fuelConsumptionAmount * Time.deltaTime ;     // Time.deltaTime is used to make the fuel consumption frame-rate independent, ensuring consistent fuel usage regardless of the frame rate.          
