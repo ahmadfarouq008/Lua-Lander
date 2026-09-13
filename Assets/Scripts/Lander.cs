@@ -7,26 +7,31 @@ using UnityEngine.InputSystem;
 
 public class Lander : MonoBehaviour {
 
-    // Events declared for thruster forces, which can be subscribed to by other scripts (like LanderVisuals) to react to these forces being applied :
+    public static Lander Instance { get; private set; }                            // Singleton pattern to ensure that there is only one instance of the Lander class in the scene, which can be accessed globally through the Instance property. This allows other scripts to easily access the Lander instance and subscribe to its events or call its methods without needing a direct reference to the Lander object. Main purpose -> It removes drag & drop , Guarantee only ONE(Lander as singleton , not its copies as lander 1 and lander 2, that's why its static.) exists and Global access by lander.instance. with events subscription. Singleton is made by 'static' keyword. { get; private set; } --> anyone can READ Lander.Instance, but only Lander class itself can SET it. Inside Awake() { Instance = this; } is allowed, outside is blocked, this is encapsulation. Summary: static itself is allowed with 2 landers by which you can have public static int totalLanders; to count how many landers exist. But public static Lander Instance that holds ONE lander only works when you guarantee there is only ONE Lander.That's why seniors say: Only Managers should be Singleton, Player should NOT. GameManager, AudioManager = Singleton. Lander, Enemy, Bullet = NOT Singleton.That is the whole singleton trick: one static field holds only one instance.Hence static means Lander belongs to the CLASS itself, not to any object. There is only ONE memory slot for Lander.Instance for the whole game.
+
+
+                                                                                  // Events declared for thruster forces, which can be subscribed to by other scripts (like LanderVisuals) to react to these forces being applied :
     public event EventHandler OnUpForce ;
     public event EventHandler OnRightForce ;
     public event EventHandler OnLeftForce ;
     public event EventHandler OnBeforeForce ;
-    public event EventHandler OnCoinPickUp ;  // Event declared for coin pickup, which can be subscribed to by other scripts (like GameManager) to react to the coin being picked up.
-
+    public event EventHandler OnCoinPickUp ;                                      // Event declared for coin pickup, which can be subscribed to by other scripts (like GameManager) to react to the coin being picked up.
+    
 
     private Rigidbody2D LanderRigidbody2D ;
-    private float fuelAmount = 10f;        // 
+    private float fuelAmount = 10f;     
 
     private void Awake() {
 
         LanderRigidbody2D = GetComponent<Rigidbody2D>() ;
+
+        Instance = this ;                                                          // Assign the current instance of the Lander class to the static Instance property, allowing global access to this instance. 'this' = the real Lander GameObject in your scene. Now the static CLASS slot points to the one real INSTANCE in scene.
     }
     private void FixedUpdate(){
         OnBeforeForce?.Invoke(this, EventArgs.Empty) ;                             // fire off / invoke the OnBeforeForce event before checking for any thruster forces being applied. This allows any subscribers/listeners to prepare for the upcoming forces.
              
         
-        if (fuelAmount <= 0f){                                   // if fuel is 0 or less then we dont want to apply any force so we just return(the funtion does not do any work) and lander stops working.
+        if (fuelAmount <= 0f){                                                     // if fuel is 0 or less then we dont want to apply any force so we just return(the funtion does not do any work) and lander stops working.
             return;    
         }
 
@@ -124,9 +129,9 @@ public class Lander : MonoBehaviour {
         }  
     }
 
-    private void ConsumeFuel() {                                   // By this function we are consuming/decreasing fuel amount per second.e.g. 2 sec = 2 unit of  fuel consumed.
-        float fuelConsumptionAmount = 1f ;                         // 1 unit of fuel per second
-        fuelAmount -= fuelConsumptionAmount * Time.deltaTime ;     // Time.deltaTime is used to make the fuel consumption frame-rate independent, ensuring consistent fuel usage regardless of the frame rate.          
+    private void ConsumeFuel() {                                                  // By this function we are consuming/decreasing fuel amount per second.e.g. 2 sec = 2 unit of  fuel consumed.
+        float fuelConsumptionAmount = 1f ;                                        // 1 unit of fuel per second
+        fuelAmount -= fuelConsumptionAmount * Time.deltaTime ;                    // Time.deltaTime is used to make the fuel consumption frame-rate independent, ensuring consistent fuel usage regardless of the frame rate.          
     }
 
 }
