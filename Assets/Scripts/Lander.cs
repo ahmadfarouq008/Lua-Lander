@@ -15,8 +15,13 @@ public class Lander : MonoBehaviour {
     public event EventHandler OnRightForce ;
     public event EventHandler OnLeftForce ;
     public event EventHandler OnBeforeForce ;
+    
     public event EventHandler OnCoinPickUp ;                                      // Event declared for coin pickup, which can be subscribed to by other scripts (like GameManager) to react to the coin being picked up.
     
+    public event EventHandler <OnLandedEventArgs> OnLanded;
+    public class OnLandedEventArgs : EventArgs {                                  // This custom OnLandedEventArgs class that belongs event arguments is used to pass additional data (the score) when the OnLanded event is triggered. It inherits from EventArgs, which is a base class for classes containing event data. The score property will hold the final score calculated based on the landing conditions.
+        public int finalScore ;
+    }
 
     private Rigidbody2D LanderRigidbody2D ;
     private float fuelAmount = 10f;     
@@ -112,6 +117,11 @@ public class Lander : MonoBehaviour {
 
         
         Debug.Log( $" Angle Score: {angleScore:F0}/100 | Speed Score: {speedScore:F0}/100 | Final Score: {averageScore:F0} x {landingPad.GetScoreMultiplier()} = {finalScore} Points." ) ;  // landingPad.GetScoreMultiplier() means(returns) scoreMultiplier value.
+        
+        OnLanded?.Invoke(this, new OnLandedEventArgs { finalScore = finalScore }) ;  // Invoke the OnLanded event and pass the final score as an argument to any subscribers/listeners that are interested in the landing event. Here we are creating new OnLandedEventArgs class and setting its score property to the calculated finalScore. This allows any subscribers to access the final score when they handle the OnLanded event.
+        //                                                 |            |
+        //                                                 |            |
+        //    (final score passed by event as argument ) <--            --> (final multiplied score)
     }
 
     private void OnTriggerEnter2D(Collider2D collider) {                          // Beacause we want to pick up fuel when we collide with fuel pickup object with 'is trigger option' checked, so we use OnTriggerEnter2D function which is invoked automatically by unity when lander collides with fuel pickup object and we get the argument input (collider variable stores the data that something is collided with fuel game object) which is stored in collider variable (parameter) as writen in below line "if" code. 
