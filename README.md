@@ -202,14 +202,28 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - **Zero Fuel Logic:** `if(fuelAmount <= 0f) return;` - no thrust, no torque, no thruster events. Lander drifts only.
 - **Pickup Collider Non-Solid:** Set `CircleCollider2D / BoxCollider2D` `IsTrigger = ON`. Solid = `IsTrigger = OFF`, Ghost/Trigger = `ON`.
 - **Trigger Detection:** `OnTriggerEnter2D(Collider2D collider)` for pickups. `OnCollisionEnter2D` is for solid hits only. Trigger needs one `Rigidbody2D` to fire.
-- **Clean Identification:** `TryGetComponent(out FuelPickUp fuelPickup)` - type-safe, no `tag` or `name` string checks. 
+- **Clean Identification:** `TryGetComponent(out FuelPickUp fuelPickup)` - type-safe, no `tag` or `name` string checks.
 - **FuelPickup Script Role:** Marker Component + Data + Self-Destruction.
 - **DestroySelf on Pickup:** `public void DestroySelf(){ Destroy(gameObject); }` placed in `FuelPickup.cs` not in `Lander.cs`. SRP - pickup handles its own death/VFX/sound. Lander just calls it.
 - **If Miss Pickup:** Nothing happens, `OnTriggerEnter2D` never fires, pickup stays.
 - **Tunable:** Can make Prefab Variants `Fuel_Small` x1 and `Fuel_Big` x5.
-  
+
 ### 🚀 Live Demo
 <img width="800" height="652" alt="Image" src="https://github.com/user-attachments/assets/217e95c4-ba2e-45d1-90d7-249f319753f9" />
+
+#### ✅ Part 15: Game Manager Singleton, Coins, Static, Properties [02:52:55]
+- **Static:** `static` = belongs to CLASS, not instance. `public static Lander Instance` = ONE global slot for whole class. `fuelAmount` is instance = each Lander has own fuel. `Game.score` accessed via `Game.score` not `new Game().score`
+- **Why static for Singleton?** Without static you need an instance to get an instance. `Lander.Instance` works via class name, no drag & drop needed. Static lives whole game.
+- **Properties:** `public static Lander Instance { get; private set; }` = Property not field. `get` = anyone can read, `private set` = only Lander can write `Instance = this`. Protection vs `public field` where anyone can `Instance = null`
+- **Singleton Pattern:** Only ONE instance exists + global access. `Awake() { Instance = this; }` + `if(Instance!= null && Instance!= this) Destroy()`. Used for Lander for convenience, but ideal for Managers only. If 2 Landers, Singleton breaks - second overwrites first.
+- **GameManager Role:** Single source of truth for Score. Holds `private int Score` + `AddScore(int amount)` method, not direct field modify. Encapsulation - add UI, save, clamp in one place.
+- **CoinPickup Marker:** Empty `CoinPickup.cs` as identifier like `LandingPad.cs`. `TryGetComponent<CoinPickup>(out coinPickup)` type-safe, no tag string. Holds `DestroySelf()`.
+- **Event for Coins:** `public event EventHandler OnCoinPickup;` in Lander. Lander broadcasts `OnCoinPickup?.Invoke(this, EventArgs.Empty)` on trigger, doesn't know Score. GameManager subscribes in `Start()` via `Lander.Instance.OnCoinPickup += Lander_OnCoinPickup;` = decoupling
+- **Custom EventArgs for Landing Score:** `OnLanded` needs data. Created `public class OnLandedEventArgs : EventArgs { public int finalScore; }` + `EventHandler<OnLandedEventArgs>`. Lander creates `new OnLandedEventArgs{ finalScore = finalScore }` and invokes. GameManager gets `e.finalScore` via `Lander_OnLanded(object sender, Lander.OnLandedEventArgs e){ AddCoinScore(e.finalScore); }`
+- **Awake vs Start:** `Awake()` sets `Instance = this`, `Start()` subscribes `Lander.Instance.OnCoinPickup` - ensures Instance exists. Awake before Start for all objects.
+  
+### 🚀 Live Demo
+<img width="800" height="638" alt="Image" src="https://github.com/user-attachments/assets/818b9d4a-7fef-4f3f-9c4c-2d77cb530dcc" />
 
 ### 🎮 Features Implemented
 - URP 2D Project Setup in Unity 6.5[x]
@@ -227,7 +241,10 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - Thruster Visuals - Events/Delegates (OnUpForce, OnLeftForce, OnRightForce, OnBeforeForce) + EventHandler +?.Invoke + EmissionModule.enabled + Decoupled LanderVisuals.cs[x]
 - Fuel System - fuelAmount, fuelConsumptionRate * Time.deltaTime, no thrust when 0[x]
 - Fuel Pickups - IsTrigger, OnTriggerEnter2D, TryGetComponent(out FuelPickup fuelPickUp), DestroySelf() in FuelPickup script[x]
-- [ ] UI, Coins, Levels
+- C# Core - static vs instance, Properties { get; private set; }, Instance, Singleton Pattern[x]
+- Game Manager Singleton - static Instance, Awake() Instance = this, private set protection, Awake vs Start order[x]
+- Coins & Custom Events - CoinPickup marker, OnCoinPickup event, OnLandedEventArgs : EventArgs, EventHandler<OnLandedEventArgs>, e.finalScore passing[x]
+- [ ] UI, Levels
 
 ### 🕹 Controls
 - **Up Arrow / W** - Thrust forward (where nose points)
