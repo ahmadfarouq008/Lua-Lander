@@ -144,6 +144,19 @@ public class Lander : MonoBehaviour {
         fuelAmount -= fuelConsumptionAmount * Time.deltaTime ;                    // Time.deltaTime is used to make the fuel consumption frame-rate independent, ensuring consistent fuel usage regardless of the frame rate.          
     }
 
+    public float GetFuel(){
+        return fuelAmount ;
+        
+    }
+
+    public float GetSpeedX(){ 
+        return LanderRigidbody2D.linearVelocityX ;   
+    }
+
+    public float GetSpeedY(){ 
+        return LanderRigidbody2D.linearVelocityY ;   
+    }
+
 }
     
 
