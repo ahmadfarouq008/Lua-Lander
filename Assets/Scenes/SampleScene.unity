@@ -2528,6 +2528,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StatsUI
   statsTextMesh: {fileID: 1548191280}
+  speedUpArrowGameObject: {fileID: 311327234}
+  speedDownArrowGameObject: {fileID: 1533734537}
+  speedRightArrowGameObject: {fileID: 862682965}
+  speedLeftArrowGameObject: {fileID: 710028359}
 --- !u!1001 &1824661166
 PrefabInstance:
   m_ObjectHideFlags: 0
