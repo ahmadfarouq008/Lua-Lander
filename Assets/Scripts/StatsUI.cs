@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -14,9 +15,9 @@ public class StatsUI : MonoBehaviour{
 
         statsTextMesh.text =
                             GameManager.Instance.GetScore() + "\n" + 
-                            GameManager.Instance.GetTime() + "\n" + 
-                            Lander.Instance.GetSpeedX() + "\n" + 
-                            Lander.Instance.GetSpeedY() + "\n" + 
-                            Lander.Instance.GetFuel()  ;
+                            Mathf.Round(GameManager.Instance.GetTime()) + "\n" + 
+                            Mathf.Round(Lander.Instance.GetSpeedX() * 10f) + "\n" + 
+                            Mathf.Round (Lander.Instance.GetSpeedY() * 10f) + "\n" + 
+                            Mathf.Round(Lander.Instance.GetFuel())  ;
     }
 }
