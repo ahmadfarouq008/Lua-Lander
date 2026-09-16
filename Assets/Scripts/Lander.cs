@@ -24,8 +24,8 @@ public class Lander : MonoBehaviour {
     }
 
     private Rigidbody2D LanderRigidbody2D ;
-    private float fuelAmount ;
-    private float fuelAmountMax = 10f ;     
+    private float fuelAmount ;                                                     // current fuel left in tank, will go 10 -> 0
+    private float fuelAmountMax = 10f ;                                            // max capacity of tank, 10 units
 
     private void Awake() {
 
@@ -33,7 +33,7 @@ public class Lander : MonoBehaviour {
 
         Instance = this ;                                                          // Assign the current instance of the Lander class to the static Instance property, allowing global access to this instance. 'this' = the real Lander GameObject in your scene. Now the static CLASS slot points to the one real INSTANCE in scene.
         
-        fuelAmount = fuelAmountMax ;
+        fuelAmount = fuelAmountMax ;                                               // Awake/Start: fill tank full on game start, 10 = 10
     }
     private void FixedUpdate(){
         OnBeforeForce?.Invoke(this, EventArgs.Empty) ;                             // fire off / invoke the OnBeforeForce event before checking for any thruster forces being applied. This allows any subscribers/listeners to prepare for the upcoming forces.
@@ -132,9 +132,9 @@ public class Lander : MonoBehaviour {
             
             float addFuelAmount = 10f ;
             fuelAmount += addFuelAmount ;
-            
-            if (fuelAmount > fuelAmountMax) {
-                fuelAmount = fuelAmountMax ;
+
+            if (fuelAmount > fuelAmountMax) {                                    // check: did we overfill? if already the fuel bar is 80% filled amd we get the fuel then we get fuel amount of 180% which we donot want, i.e. 8 + 10 = 18 > 10
+                fuelAmount = fuelAmountMax ;                                     // set back to max, no overflow, stays 10 (100% on fuel pick up.)
             }
             fuelPickup.DestroySelf() ;                                            // we call the DestroySelf() function in FuelPickUp.cs public file to destroy the fuel pickup game object after collision with lander. Here fuelPickup is used beacause it is the reference to that fuel pickup game object.
         }  
@@ -155,7 +155,7 @@ public class Lander : MonoBehaviour {
         return fuelAmount ;
         
     }
-    public float GetFuelAmountNormalized(){
+    public float GetFuelAmountNormalized(){                                       // gives UI a 0-1 value, Normalized means conversion into 0 - 1 range. Image.fillAmount ONLY understands 0-1. e.g. fuelAmount = 5, max = 10 => 5/10 = 0.5 = 50% , here the bar will be 50% filled. As the fuel amount decreaes, the values comes in this function and get normalized so on until fuel amount becomes 0.  
         return fuelAmount / fuelAmountMax ;
         
     }
