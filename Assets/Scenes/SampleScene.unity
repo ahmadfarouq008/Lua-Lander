@@ -2685,6 +2685,7 @@ MonoBehaviour:
   speedDownArrowGameObject: {fileID: 1533734537}
   speedRightArrowGameObject: {fileID: 862682965}
   speedLeftArrowGameObject: {fileID: 710028359}
+  fuelImage: {fileID: 100940008}
 --- !u!1001 &1824661166
 PrefabInstance:
   m_ObjectHideFlags: 0

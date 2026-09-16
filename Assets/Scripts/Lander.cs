@@ -24,13 +24,16 @@ public class Lander : MonoBehaviour {
     }
 
     private Rigidbody2D LanderRigidbody2D ;
-    private float fuelAmount = 10f;     
+    private float fuelAmount ;
+    private float fuelAmountMax = 10f ;     
 
     private void Awake() {
 
         LanderRigidbody2D = GetComponent<Rigidbody2D>() ;
 
         Instance = this ;                                                          // Assign the current instance of the Lander class to the static Instance property, allowing global access to this instance. 'this' = the real Lander GameObject in your scene. Now the static CLASS slot points to the one real INSTANCE in scene.
+        
+        fuelAmount = fuelAmountMax ;
     }
     private void FixedUpdate(){
         OnBeforeForce?.Invoke(this, EventArgs.Empty) ;                             // fire off / invoke the OnBeforeForce event before checking for any thruster forces being applied. This allows any subscribers/listeners to prepare for the upcoming forces.
@@ -129,6 +132,10 @@ public class Lander : MonoBehaviour {
             
             float addFuelAmount = 10f ;
             fuelAmount += addFuelAmount ;
+            
+            if (fuelAmount > fuelAmountMax) {
+                fuelAmount = fuelAmountMax ;
+            }
             fuelPickup.DestroySelf() ;                                            // we call the DestroySelf() function in FuelPickUp.cs public file to destroy the fuel pickup game object after collision with lander. Here fuelPickup is used beacause it is the reference to that fuel pickup game object.
         }  
                           
@@ -146,6 +153,10 @@ public class Lander : MonoBehaviour {
 
     public float GetFuel(){
         return fuelAmount ;
+        
+    }
+    public float GetFuelAmountNormalized(){
+        return fuelAmount / fuelAmountMax ;
         
     }
 
