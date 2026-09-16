@@ -221,9 +221,22 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - **Event for Coins:** `public event EventHandler OnCoinPickup;` in Lander. Lander broadcasts `OnCoinPickup?.Invoke(this, EventArgs.Empty)` on trigger, doesn't know Score. GameManager subscribes in `Start()` via `Lander.Instance.OnCoinPickup += Lander_OnCoinPickup;` = decoupling
 - **Custom EventArgs for Landing Score:** `OnLanded` needs data. Created `public class OnLandedEventArgs : EventArgs { public int finalScore; }` + `EventHandler<OnLandedEventArgs>`. Lander creates `new OnLandedEventArgs{ finalScore = finalScore }` and invokes. GameManager gets `e.finalScore` via `Lander_OnLanded(object sender, Lander.OnLandedEventArgs e){ AddCoinScore(e.finalScore); }`
 - **Awake vs Start:** `Awake()` sets `Instance = this`, `Start()` subscribes `Lander.Instance.OnCoinPickup` - ensures Instance exists. Awake before Start for all objects.
-  
+
 ### 🚀 Live Demo
 <img width="800" height="638" alt="Image" src="https://github.com/user-attachments/assets/818b9d4a-7fef-4f3f-9c4c-2d77cb530dcc" />
+
+#### ✅ Part 16: Stats UI - Scoreboard, Fuel Bar, Speed Arrows [03:04:05]
+- **Canvas Setup:** Created `Canvas > StatsUI` parent + children `FuelBarBackground` + `FuelBar` + `StatsTextMesh` + `SpeedUpArrow` / `SpeedDownArrow` / `SpeedRightArrow` / `SpeedLeftArrow` - all UI Image / TextMeshProUGUI
+- **StatsUI.cs - Singleton Access:** Uses `Lander.Instance` and `GameManager.Instance` directly, no drag for Lander. `[SerializeField] private Image fuelImage` is dragged (green bar), `[SerializeField] private TextMeshProUGUI statsTextMesh` dragged for Score/Time/Speed text, 4 arrow GameObjects dragged
+- **Fuel Bar Logic:** `private float fuelAmount` + `fuelAmountMax = 10f` + `fuelAmount = fuelAmountMax` on Start. `GetFuelAmountNormalized() { return fuelAmount / fuelAmountMax; }` returns 0-1. UI: `fuelImage.fillAmount = Lander.Instance.GetFuelAmountNormalized()` - Image Type = Filled, Fill Method = Horizontal, fillAmount 1=full, 0.5=half, 0=empty. Clamp on pickup `if(fuelAmount > fuelAmountMax) fuelAmount = fuelAmountMax`
+- **Speed Arrows Direction:** `speedUpArrowGameObject.SetActive(Lander.Instance.GetSpeedY() >= 0)` and Down `<0`, Right `GetSpeedX() >=0`, Left `<0` - shows where you are drifting, arrow toggles via `SetActive()`
+- **Scoreboard Text:** `statsTextMesh.text = GameManager.Instance.GetScore() + "\n" + Mathf.Round(GameManager.Instance.GetTime()) + "\n" + Mathf.Abs(Mathf.Round(Lander.Instance.GetSpeedX()*10f)) + "\n" + Mathf.Abs(Mathf.Round(Lander.Instance.GetSpeedY()*10f))` - Score, Time, Speed X/Y multiplied by 10 for readability
+- **Why Normalized + fillAmount:** Decoupling - UI only understands 0-1, if max changes 10 to 100, normalized still works. No Animator needed, Update every frame creates smooth draining animation
+- **Fuel Pickup Integration:** `OnTriggerEnter2D` + `TryGetComponent(out FuelPickup)` + `fuelAmount += addFuelAmount` + `DestroySelf()` in FuelPickup.cs - SRP, pickup handles own death
+- **Result:** Fully working scoreboard top-left - Score, Time, Speed X/Y numbers + fuel bar shrinking + arrows flipping based on velocity.
+
+### 🚀 Live Demo
+<img width="800" height="372" alt="Image" src="https://github.com/user-attachments/assets/a7c104b2-ab72-4612-8157-0aa56acc8ff3" />
 
 ### 🎮 Features Implemented
 - URP 2D Project Setup in Unity 6.5[x]
@@ -244,7 +257,8 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - C# Core - static vs instance, Properties { get; private set; }, Instance, Singleton Pattern[x]
 - Game Manager Singleton - static Instance, Awake() Instance = this, private set protection, Awake vs Start order[x]
 - Coins & Custom Events - CoinPickup marker, OnCoinPickup event, OnLandedEventArgs : EventArgs, EventHandler<OnLandedEventArgs>, e.finalScore passing[x]
-- [ ] UI, Levels
+- Stats UI - Canvas + StatsUI.cs + TextMeshProUGUI statsTextMesh + Image fuelImage with fillAmount = GetFuelAmountNormalized(), Speed Arrows SetActive via GetSpeedX/Y, Scoreboard Score/Time/Speed display via GameManager.Instance + Lander.Instance[x]
+- [ ] Levels
 
 ### 🕹 Controls
 - **Up Arrow / W** - Thrust forward (where nose points)
