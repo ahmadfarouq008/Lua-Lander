@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour {
 
     private void AddCoinScore(int addCoinScoreAmount){                                   // This method can be used to add score when a coin is picked up. The addScoreAmount parameter specifies how much score to add.
         coinScore += addCoinScoreAmount ;                                                // Increment the score by the specified amount.
-        Debug.Log("Score: " + coinScore) ;                                           // Log the updated score to the console for debugging purposes.
+                                                   
     }  
 
     public int GetScore(){

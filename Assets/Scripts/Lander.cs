@@ -20,7 +20,17 @@ public class Lander : MonoBehaviour {
     
     public event EventHandler <OnLandedEventArgs> OnLanded;
     public class OnLandedEventArgs : EventArgs {                                  // This custom OnLandedEventArgs class that belongs event arguments is used to pass additional data (the score) when the OnLanded event is triggered. It inherits from EventArgs, which is a base class for classes containing event data. The score property will hold the final score calculated based on the landing conditions.
+        public LandingType landingType ;
         public int finalScore ;
+        public float landingSpeed ;
+        public float landingAngle ;
+        public float scoreMultiplier ;
+    }
+    public enum LandingType {
+        success,
+        crashedOnTerrain,
+        tooSteepAngle,
+        toohardLanding,
     }
 
     private Rigidbody2D LanderRigidbody2D ;
@@ -82,6 +92,15 @@ public class Lander : MonoBehaviour {
 
         if (!collision.gameObject.TryGetComponent(out LandingPad landingPad)) {
             Debug.Log("Crashed on the Terrain!!") ;
+
+            OnLanded?.Invoke(this, new OnLandedEventArgs {
+            landingType = LandingType.crashedOnTerrain,
+            
+            landingSpeed = 0f,
+            landingAngle = 0f,
+            scoreMultiplier = 0f,
+            finalScore = 0,                                                       
+        }) ;
             return ;
         }
 
@@ -90,6 +109,15 @@ public class Lander : MonoBehaviour {
         float relativeVelocityMagnitude = collision.relativeVelocity.magnitude ;  // relativeVeloctyMagnitue means landing speed value.
         if (relativeVelocityMagnitude > softLandingVelocityMagnitude ){
         Debug.Log("Landed too hard!");
+
+        OnLanded?.Invoke(this, new OnLandedEventArgs {
+            landingType = LandingType.toohardLanding,
+            
+            landingSpeed = relativeVelocityMagnitude,
+            landingAngle = 0f,
+            scoreMultiplier = 0f,
+            finalScore = 0,                                                       
+        }) ;
         return ;
         }       
         
@@ -97,6 +125,15 @@ public class Lander : MonoBehaviour {
         float minDotVector = .95f ;                                               //  dotVector means landing angle value.
         if (dotVector < minDotVector){
         Debug.Log("Landed on a too steep angle!") ;
+
+        OnLanded?.Invoke(this, new OnLandedEventArgs {
+            landingType = LandingType.tooSteepAngle,
+            
+            landingSpeed = 0f,
+            landingAngle = dotVector,
+            scoreMultiplier = 0f,
+            finalScore = 0,                                                       
+        }) ;
         return;
         }
 
@@ -121,10 +158,19 @@ public class Lander : MonoBehaviour {
         
         Debug.Log( $" Angle Score: {angleScore:F0}/100 | Speed Score: {speedScore:F0}/100 | Final Score: {averageScore:F0} x {landingPad.GetScoreMultiplier()} = {finalScore} Points." ) ;  // landingPad.GetScoreMultiplier() means(returns) scoreMultiplier value.
         
-        OnLanded?.Invoke(this, new OnLandedEventArgs { finalScore = finalScore }) ;  // Invoke the OnLanded event and pass the final score as an argument to any subscribers/listeners that are interested in the landing event. Here we are creating new OnLandedEventArgs class and setting its score property to the calculated finalScore. This allows any subscribers to access the final score when they handle the OnLanded event.
-        //                                                 |            |
-        //                                                 |            |
-        //    (final score passed by event as argument ) <--            --> (final multiplied score)
+        OnLanded?.Invoke(this, new OnLandedEventArgs {
+            landingType = LandingType.success,
+            
+            landingSpeed = relativeVelocityMagnitude,
+            landingAngle = dotVector,
+            scoreMultiplier = landingPad.GetScoreMultiplier(),
+            finalScore = finalScore,                                                        // Invoke the OnLanded event and pass the final score as an argument to any subscribers/listeners that are interested in the landing event. Here we are creating new OnLandedEventArgs class and setting its score property to the calculated finalScore. This allows any subscribers to access the final score when they handle the OnLanded event.
+        }) ;  
+        //       |            |
+        //       |            |--> (final multiplied score)
+        //       |
+        //       |---> (final score passed by event as argument )             
+        //          
     }
 
     private void OnTriggerEnter2D(Collider2D collider) {                          // Beacause we want to pick up fuel when we collide with fuel pickup object with 'is trigger option' checked, so we use OnTriggerEnter2D function which is invoked automatically by unity when lander collides with fuel pickup object and we get the argument input (collider variable stores the data that something is collided with fuel game object) which is stored in collider variable (parameter) as writen in below line "if" code. 
