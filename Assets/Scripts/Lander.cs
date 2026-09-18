@@ -19,19 +19,22 @@ public class Lander : MonoBehaviour {
     public event EventHandler OnCoinPickUp ;                                      // Event declared for coin pickup, which can be subscribed to by other scripts (like GameManager) to react to the coin being picked up.
     
     public event EventHandler <OnLandedEventArgs> OnLanded;
-    public class OnLandedEventArgs : EventArgs {                                  // This custom OnLandedEventArgs class that belongs event arguments is used to pass additional data (the score) when the OnLanded event is triggered. It inherits from EventArgs, which is a base class for classes containing event data. The score property will hold the final score calculated based on the landing conditions.
-        public LandingType landingType ;
-        public int finalScore ;
-        public float landingSpeed ;
-        public float landingAngle ;
-        public float scoreMultiplier ;
+    public class OnLandedEventArgs : EventArgs {                                  // this is a PACKET/BAG to send MULTIPLE data to LandedUI when OnLanded event fires.
+        public LandingType landingType ;                                          // WHICH type of landing happened - out of 4 options below insode 'enum'.
+        public int finalScore;                                                    // final points after multiplier - e.g. 363
+        public float landingSpeed;                                                // impact speed - relativeVelocity.magnitude
+        public float landingAngle;                                                // dotVector - 1 = perfectly up, 0 = sideways
+        public float scoreMultiplier;                                             // x1 easy pad, x5 hard pad - from LandingPad.GetScoreMultiplier()
     }
-    public enum LandingType {
-        success,
-        crashedOnTerrain,
-        tooSteepAngle,
-        toohardLanding,
-    }
+    
+    
+    public enum LandingType {                                                     // Enum = fixed list of named constants - one landing can only be ONE of these 4, can't be 2 at same time.Better than many strings like  "crashed" or int 0,1,2,3 (what does 2 mean?)
+                                        
+        success,                                                                  // all checks passed - soft + straight + on pad
+        crashedOnTerrain,                                                        // TryGetComponent<LandingPad> failed = hit terrain, not pad
+        tooSteepAngle,                                                           // on pad but dotVector < 0.90f = tilted >25 degrees
+        toohardLanding,                                                          // on pad but relativeVelocity > 4f = too fast
+}
 
     private Rigidbody2D LanderRigidbody2D ;
     private float fuelAmount ;                                                     // current fuel left in tank, will go 10 -> 0
@@ -93,9 +96,9 @@ public class Lander : MonoBehaviour {
         if (!collision.gameObject.TryGetComponent(out LandingPad landingPad)) {
             Debug.Log("Crashed on the Terrain!!") ;
 
-            OnLanded?.Invoke(this, new OnLandedEventArgs {
-            landingType = LandingType.crashedOnTerrain,
-            
+            OnLanded?.Invoke(this, new OnLandedEventArgs {                                     
+            landingType = LandingType.crashedOnTerrain,                                               // tells UI it was terrain crash, so title = "CRASHED!" . crashedOnterrain - enum's name, is invoked and sent to LandedUI.cs if lander landes on terrain.
+                                                                                                      // we dont want to show any stats if lander crashed that's why all four stats are 0. 
             landingSpeed = 0f,
             landingAngle = 0f,
             scoreMultiplier = 0f,
@@ -107,14 +110,15 @@ public class Lander : MonoBehaviour {
         // now in this space of code line, we get the argument input(speed/hit data), when lander falls and this function is invoked automatically by untiy and argument input (that we got in unity) is stored in collision(parameter) as writen in below line "if" code. 
         float softLandingVelocityMagnitude = 5f ;                                 //  softLandingVelocityMagnitude means max allowed speed.
         float relativeVelocityMagnitude = collision.relativeVelocity.magnitude ;  // relativeVeloctyMagnitue means landing speed value.
+        
         if (relativeVelocityMagnitude > softLandingVelocityMagnitude ){
         Debug.Log("Landed too hard!");
 
         OnLanded?.Invoke(this, new OnLandedEventArgs {
-            landingType = LandingType.toohardLanding,
-            
-            landingSpeed = relativeVelocityMagnitude,
-            landingAngle = 0f,
+            landingType = LandingType.toohardLanding,                                     // tells UI it was fast landing, so title = "LANDED TOO HARD!" . tooHardLanding - enum's name, is invoked and sent to LandedUI.cs if lander landes too hard.
+                
+            landingSpeed = relativeVelocityMagnitude,                                     // we only show landing speed stats in banner beacause landing was too hard so landing speed should be shown.As final score is 0 on hard landing so all remaining stats are also 0. 
+            landingAngle = 0f,  
             scoreMultiplier = 0f,
             finalScore = 0,                                                       
         }) ;
@@ -122,15 +126,15 @@ public class Lander : MonoBehaviour {
         }       
         
         float dotVector = Vector2.Dot(Vector2.up,transform.up) ;
-        float minDotVector = .95f ;                                               //  dotVector means landing angle value.
+        float minDotVector = .95f ;                                                      //  dotVector means landing angle value.
         if (dotVector < minDotVector){
         Debug.Log("Landed on a too steep angle!") ;
 
-        OnLanded?.Invoke(this, new OnLandedEventArgs {
-            landingType = LandingType.tooSteepAngle,
+        OnLanded?.Invoke(this, new OnLandedEventArgs { 
+            landingType = LandingType.tooSteepAngle,                                     // tells UI it was steep landing, so title = "LANDED TOO STEEP!". tooSteepAngle - enum's name, is invoked and sent to LandedUI.cs if lander landes on steep angle.
             
             landingSpeed = 0f,
-            landingAngle = dotVector,
+            landingAngle = dotVector,                                                   // we only show landing angle stats in banner beacause landing was too steep so landing angel should be shown.As final score is 0 on too steep landing so all remaining stats are also 0. 
             scoreMultiplier = 0f,
             finalScore = 0,                                                       
         }) ;
@@ -159,12 +163,12 @@ public class Lander : MonoBehaviour {
         Debug.Log( $" Angle Score: {angleScore:F0}/100 | Speed Score: {speedScore:F0}/100 | Final Score: {averageScore:F0} x {landingPad.GetScoreMultiplier()} = {finalScore} Points." ) ;  // landingPad.GetScoreMultiplier() means(returns) scoreMultiplier value.
         
         OnLanded?.Invoke(this, new OnLandedEventArgs {
-            landingType = LandingType.success,
-            
+            landingType = LandingType.success,                                             // tells UI it was success in landing, so title = "SUCCESSFUL LANDING!" . success - enum's name, is invoked and sent to LandedUI.cs if lander landes successfully.
+                                                                                           // on successful landing we show all the stats and we get prpper final score here.
             landingSpeed = relativeVelocityMagnitude,
             landingAngle = dotVector,
             scoreMultiplier = landingPad.GetScoreMultiplier(),
-            finalScore = finalScore,                                                        // Invoke the OnLanded event and pass the final score as an argument to any subscribers/listeners that are interested in the landing event. Here we are creating new OnLandedEventArgs class and setting its score property to the calculated finalScore. This allows any subscribers to access the final score when they handle the OnLanded event.
+            finalScore = finalScore,                                                       // Invoke the OnLanded event and pass the final score as an argument to any subscribers/listeners that are interested in the landing event. Here we are creating new OnLandedEventArgs class and setting its score property to the calculated finalScore. This allows any subscribers to access the final score when they handle the OnLanded event.
         }) ;  
         //       |            |
         //       |            |--> (final multiplied score)
