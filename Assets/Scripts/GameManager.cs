@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour {
 
     private int coinScore ;                                                            // Variable to keep track of the player's score, which will be incremented when a coin is picked up.
     private float time; 
+    private bool isTimerActive ;
 
     private void Awake() {
         Instance = this ;
@@ -17,10 +18,23 @@ public class GameManager : MonoBehaviour {
 
         Lander.Instance.OnCoinPickUp += Lander_OnCoinPickUp ;                    // Subscribe to the OnCoinPickUp event from the Lander script. When the event is triggered, the Lander_OnCoinPickUp method will be called.Lander.instance is just a refference to the Lander script(insted of declaring Lander then drag and drop things), which is a singleton class that manages the lander's behavior and state. 
         Lander.Instance.OnLanded += Lander_OnLanded ;                            // Subscribe to the OnLanded event from the Lander script. When the event is triggered, the Lander_OnLanded method will be called. This allows the GameManager to react to the lander successfully landing on a landing pad and handle scoring or other game logic related to landing.
+        Lander.Instance.OnStateChanged += Lander_OnStateChanged ;                           
+        
+    }
+    private void Lander_OnStateChanged(object sender, Lander.OnStateChangedEventArgs e){
+
+        if(e.state == Lander.State.Normal) {
+            isTimerActive = true;  
+        } else {
+            isTimerActive = false; 
+        }
     }
     private void Update(){
-        time += Time.deltaTime ;
-    }
+
+        if (isTimerActive == true){
+        time += Time.deltaTime ;                        
+        }
+    } 
 
     private void Lander_OnCoinPickUp(object sender, System.EventArgs e){         // This method is called when the OnCoinPickUp event is triggered in the Lander script. It handles the logic for when a coin is picked up.
        AddCoinScore(500) ;                                                           // Call the AddScore method to increment the score by 500 points when a coin is picked up.

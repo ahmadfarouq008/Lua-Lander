@@ -19,7 +19,10 @@ public class Lander : MonoBehaviour {
     public event EventHandler OnBeforeForce ;
     
     public event EventHandler OnCoinPickUp ;                                      // Event declared for coin pickup, which can be subscribed to by other scripts (like GameManager) to react to the coin being picked up.
-    
+    public event EventHandler <OnStateChangedEventArgs> OnStateChanged;
+    public class OnStateChangedEventArgs : EventArgs{
+        public State state ; 
+    }                                 
     public event EventHandler <OnLandedEventArgs> OnLanded;
     public class OnLandedEventArgs : EventArgs {                                  // this is a PACKET/BAG to send MULTIPLE data to LandedUI when OnLanded event fires.
         public LandingType landingType ;                                          // WHICH type of landing happened - out of 4 options below insode 'enum'.
@@ -35,8 +38,8 @@ public class Lander : MonoBehaviour {
         success,                                                                  // all checks passed - soft + straight + on pad
         crashedOnTerrain,                                                        // TryGetComponent<LandingPad> failed = hit terrain, not pad
         tooSteepAngle,                                                           // on pad but dotVector < 0.90f = tilted >25 degrees
-        toohardLanding,                                                          // on pad but relativeVelocity > 4f = too fast
-}
+        toohardLanding,                                                          // on pad but relativeVelocity > 4f = too fast 
+    }
     public enum State {
         WaitingToStart,
         Normal,
@@ -68,7 +71,11 @@ public class Lander : MonoBehaviour {
             if (Keyboard.current.upArrowKey.isPressed || Keyboard.current.leftArrowKey.isPressed || Keyboard.current.rightArrowKey.isPressed) {        // if any of the arrow keys are pressed either simultaneously or individually, the fuel is consumed per second and we call the ConsumeFuel() function to decrease the fuel amount.
             ConsumeFuel();  
             LanderRigidbody2D.gravityScale = GRAVITY_NORMAL ;
-            state = State.Normal;                                            
+            state = State.Normal;    
+            OnStateChanged?.Invoke(this, new OnStateChangedEventArgs {
+            
+            state = state ,
+        }) ;                                        
             }
             break;
 
@@ -76,39 +83,37 @@ public class Lander : MonoBehaviour {
         
             if (fuelAmount <= 0f){                                                     // if fuel is 0 or less then we dont want to apply any force so we just return(the funtion does not do any work) and lander stops working.
             return;    
-        }
-
-        if (Keyboard.current.upArrowKey.isPressed || Keyboard.current.leftArrowKey.isPressed || Keyboard.current.rightArrowKey.isPressed) {        // if any of the arrow keys are pressed either simultaneously or individually, the fuel is consumed per second and we call the ConsumeFuel() function to decrease the fuel amount.
-            
-            ConsumeFuel();                                            
-        }
-
-        if (Keyboard.current.upArrowKey.isPressed ){
-
-            float force = 700f ;
-            LanderRigidbody2D.AddForce(force * transform.up * Time.deltaTime);
-
-            OnUpForce?.Invoke(this, EventArgs.Empty) ;                             // fire off / invoke the OnUpForce event when the up arrow key is pressed and the upward force is applied. This allows any subscribers/listeners to react to the upward force being applied.
-        }
-        if (Keyboard.current.rightArrowKey.isPressed){
-
-            float turnSpeed = -100f ;
-            LanderRigidbody2D.AddTorque(turnSpeed * Time.deltaTime);
-
-            OnRightForce?.Invoke(this, EventArgs.Empty) ;                          // fire off / invoke the OnRightForce event when the right arrow key is pressed and the rightward torque is applied. This allows any subscribers/listeners to react to the rightward force being applied.
-        }
-        if (Keyboard.current.leftArrowKey.isPressed){
-
-            float turnSpeed = +100f ;
-            LanderRigidbody2D.AddTorque(turnSpeed * Time.deltaTime);
-
-            OnLeftForce?.Invoke(this, EventArgs.Empty) ;                           // fire off / invoke the OnLeftForce event when the left arrow key is pressed and the leftward torque is applied. This allows any subscribers/listeners to react to the leftward force being applied.
-        }
-            
-            break;
-            
+            }
+    
+            if (Keyboard.current.upArrowKey.isPressed || Keyboard.current.leftArrowKey.isPressed || Keyboard.current.rightArrowKey.isPressed) {        // if any of the arrow keys are pressed either simultaneously or individually, the fuel is consumed per second and we call the ConsumeFuel() function to decrease the fuel amount.
+                
+                ConsumeFuel();                                            
+            }
+    
+            if (Keyboard.current.upArrowKey.isPressed ){
+    
+                float force = 700f ;
+                LanderRigidbody2D.AddForce(force * transform.up * Time.deltaTime);
+    
+                OnUpForce?.Invoke(this, EventArgs.Empty) ;                             // fire off / invoke the OnUpForce event when the up arrow key is pressed and the upward force is applied. This allows any subscribers/listeners to react to the upward force being applied.
+            }
+            if (Keyboard.current.rightArrowKey.isPressed){
+    
+                float turnSpeed = -100f ;
+                LanderRigidbody2D.AddTorque(turnSpeed * Time.deltaTime);
+    
+                OnRightForce?.Invoke(this, EventArgs.Empty) ;                          // fire off / invoke the OnRightForce event when the right arrow key is pressed and the rightward torque is applied. This allows any subscribers/listeners to react to the rightward force being applied.
+            }
+            if (Keyboard.current.leftArrowKey.isPressed){
+    
+                float turnSpeed = +100f ;
+                LanderRigidbody2D.AddTorque(turnSpeed * Time.deltaTime);
+    
+                OnLeftForce?.Invoke(this, EventArgs.Empty) ;                           // fire off / invoke the OnLeftForce event when the left arrow key is pressed and the leftward torque is applied. This allows any subscribers/listeners to react to the leftward force being applied.
+            }    
+            break;    
         }     
-        
+
     }
     
     // FLOW: [Unity] Lander hits Terrain -> [Unity] creates Collision2D arg with speed/hit data -> [Unity->Code] calls OnCollisionEnter2D(arg) param gets it -> [Code] if speed>4 log "hard" & return to Unity else if Dot(up,nose)<0.9 log "steep" & return to Unity else log "success" & return to Unity   
