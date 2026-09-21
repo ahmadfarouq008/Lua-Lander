@@ -21,7 +21,7 @@ public class Lander : MonoBehaviour {
     public event EventHandler OnCoinPickUp ;                                      // Event declared for coin pickup, which can be subscribed to by other scripts (like GameManager) to react to the coin being picked up.
     public event EventHandler <OnStateChangedEventArgs> OnStateChanged;
     public class OnStateChangedEventArgs : EventArgs{
-        public State state ; 
+        public State stateAsEventArg ; 
     }                                 
     public event EventHandler <OnLandedEventArgs> OnLanded;
     public class OnLandedEventArgs : EventArgs {                                  // this is a PACKET/BAG to send MULTIPLE data to LandedUI when OnLanded event fires.
@@ -43,6 +43,7 @@ public class Lander : MonoBehaviour {
     public enum State {
         WaitingToStart,
         Normal,
+        GameOver,
     }
 
     private Rigidbody2D LanderRigidbody2D ;
@@ -70,12 +71,10 @@ public class Lander : MonoBehaviour {
 
             if (Keyboard.current.upArrowKey.isPressed || Keyboard.current.leftArrowKey.isPressed || Keyboard.current.rightArrowKey.isPressed) {        // if any of the arrow keys are pressed either simultaneously or individually, the fuel is consumed per second and we call the ConsumeFuel() function to decrease the fuel amount.
             ConsumeFuel();  
+
             LanderRigidbody2D.gravityScale = GRAVITY_NORMAL ;
-            state = State.Normal;    
-            OnStateChanged?.Invoke(this, new OnStateChangedEventArgs {
-            
-            state = state ,
-        }) ;                                        
+
+            SetState (State.Normal) ;  
             }
             break;
 
@@ -112,6 +111,9 @@ public class Lander : MonoBehaviour {
                 OnLeftForce?.Invoke(this, EventArgs.Empty) ;                           // fire off / invoke the OnLeftForce event when the left arrow key is pressed and the leftward torque is applied. This allows any subscribers/listeners to react to the leftward force being applied.
             }    
             break;    
+
+            case State.GameOver:
+            break ;
         }     
 
     }
@@ -136,7 +138,9 @@ public class Lander : MonoBehaviour {
             scoreMultiplier = 0f,
             finalScore = 0,                                                       
         }) ;
-            return ;
+        SetState (State.GameOver) ;  
+
+        return ;
         }
 
         // now in this space of code line, we get the argument input(speed/hit data), when lander falls and this function is invoked automatically by untiy and argument input (that we got in unity) is stored in collision(parameter) as writen in below line "if" code. 
@@ -154,6 +158,8 @@ public class Lander : MonoBehaviour {
             scoreMultiplier = 0f,
             finalScore = 0,                                                       
         }) ;
+        SetState (State.GameOver) ;  
+        
         return ;
         }       
         
@@ -170,6 +176,8 @@ public class Lander : MonoBehaviour {
             scoreMultiplier = 0f,
             finalScore = 0,                                                       
         }) ;
+        SetState (State.GameOver) ;  
+
         return;
         }
 
@@ -206,7 +214,8 @@ public class Lander : MonoBehaviour {
         //       |            |--> (final multiplied score)
         //       |
         //       |---> (final score passed by event as argument )             
-        //          
+        //      
+        SetState (State.GameOver) ;  
     }
 
     private void OnTriggerEnter2D(Collider2D collider) {                          // Beacause we want to pick up fuel when we collide with fuel pickup object with 'is trigger option' checked, so we use OnTriggerEnter2D function which is invoked automatically by unity when lander collides with fuel pickup object and we get the argument input (collider variable stores the data that something is collided with fuel game object) which is stored in collider variable (parameter) as writen in below line "if" code. 
@@ -226,6 +235,15 @@ public class Lander : MonoBehaviour {
             OnCoinPickUp?.Invoke(this, EventArgs.Empty);                          // Invoke the coin pickup event
             coinPickUp.DestroySelf() ;                                            // we call the DestroySelf() function in CoinPickUp.cs public file to destroy the coin pickup game object after collision with lander. Here coinPickUp is used beacause it is the reference to that coin pickup game object.
         }  
+    }
+
+    private void SetState(State stateAsParameter){
+
+        this.state = stateAsParameter ;
+
+        OnStateChanged?.Invoke(this, new OnStateChangedEventArgs {
+            stateAsEventArg = state ,
+        }) ;
     }
 
     private void ConsumeFuel() {                                                  // By this function we are consuming/decreasing fuel amount per second.e.g. 2 sec = 2 unit of  fuel consumed.

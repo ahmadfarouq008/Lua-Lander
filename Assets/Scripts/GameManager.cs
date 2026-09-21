@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour {
     }
     private void Lander_OnStateChanged(object sender, Lander.OnStateChangedEventArgs e){
 
-        if(e.state == Lander.State.Normal) {
+        if(e.stateAsEventArg == Lander.State.Normal) {
             isTimerActive = true;  
         } else {
             isTimerActive = false; 
