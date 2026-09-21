@@ -238,6 +238,22 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 ### 🚀 Live Demo
 <img width="800" height="372" alt="Image" src="https://github.com/user-attachments/assets/a7c104b2-ab72-4612-8157-0aa56acc8ff3" />
 
+#### ✅ Part 17: Landed UI - Enums, Custom EventArgs & 4 Banners [03:26:02]
+- **Enums in C#:** Learned `enum` = set of named constants (backed by `int` 0,1,2,3) but type-safe. Use when one value can only be ONE of fixed choices. Better than `string` (typo) or `int` (magic numbers).
+- **My `LandingType` Enum:** Defined 4 states `success, crashedOnTerrain, tooSteepAngle, toohardLanding`. One landing can only be one type.
+- **Custom `OnLandedEventArgs : EventArgs`:** Extended to carry 5 fields: `LandingType landingType, int finalScore, float landingSpeed, float landingAngle, float scoreMultiplier`. Single packet to LandedUI, decoupled from Lander.
+- **Why `0f` logic?** Bag must be filled but not all data relevant. `crashedOnTerrain` -> speed 0, angle 0 (hit dirt). `toohardLanding` -> real `relativeVelocityMagnitude`, angle 0. `tooSteepAngle` -> real `dotVector`, speed 0. `success` -> all real values + multiplier + finalScore.
+- **My Own 4 Banners Implementation:**
+  - `crashedOnTerrain` -> Title `CRASHED!` + all stats 0
+  - `success` -> Title `SUCCESSFUL LANDING!` + all stats shown (Speed, Angle, xMultiplier, FinalScore)
+  - `tooSteepAngle` -> Title `LANDED TOO STEEP!` + landingAngle shown
+  - `toohardLanding` -> Title `LANDED TOO HARD!` + landingSpeed shown
+- **LandedUI.cs:** `Start() { Lander.Instance.OnLanded += Lander_OnLanded; Hide(); }` -> `Lander_OnLanded` checks `e.landingType` for title + builds `statsTextMesh.text = Round(e.landingSpeed) + "\n" + Round(e.landingAngle) + "\n" + "x"+e.scoreMultiplier + "\n" + e.finalScore` -> `Show() { gameObject.SetActive(true); }`
+- **Start() vs Awake() Bug:** `SetActive(false)` in `Awake()` = `Start()` never runs = event never subscribes = banner never shows. So hide in `Start()` after subscribe. Also `Instance` set in `Awake()`, so `Start()` guarantees it exists.
+
+### 🚀 Live Demo
+<img width="800" height="385" alt="Image" src="https://github.com/user-attachments/assets/68c15859-f0cb-43a3-bedf-aaab6d0d36a6" />
+
 ### 🎮 Features Implemented
 - URP 2D Project Setup in Unity 6.5[x]
 - Import Assets & Post Processing (Bloom, Vignette)[x]
@@ -258,6 +274,7 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - Game Manager Singleton - static Instance, Awake() Instance = this, private set protection, Awake vs Start order[x]
 - Coins & Custom Events - CoinPickup marker, OnCoinPickup event, OnLandedEventArgs : EventArgs, EventHandler<OnLandedEventArgs>, e.finalScore passing[x]
 - Stats UI - Canvas + StatsUI.cs + TextMeshProUGUI statsTextMesh + Image fuelImage with fillAmount = GetFuelAmountNormalized(), Speed Arrows SetActive via GetSpeedX/Y, Scoreboard Score/Time/Speed display via GameManager.Instance + Lander.Instance[x]
+- Landed UI - Enums `LandingType` (success, crashedOnTerrain, tooSteepAngle, toohardLanding) + Custom EventArgs with 5 fields + Show()/Hide() + Start() vs Awake() event safety + My 4 Custom Banners: crashed (all stats 0), successful landing (all stats shown), landed too steep (angle shown), landed too hard (speed shown)[x]
 - [ ] Levels
 
 ### 🕹 Controls
