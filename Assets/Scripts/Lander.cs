@@ -7,6 +7,8 @@ using UnityEngine.InputSystem;
 
 public class Lander : MonoBehaviour {
 
+    private const float GRAVITY_NORMAL = 0.7f;
+
     public static Lander Instance { get; private set; }                            // Singleton pattern to ensure that there is only one instance of the Lander class in the scene, which can be accessed globally through the Instance property. This allows other scripts to easily access the Lander instance and subscribe to its events or call its methods without needing a direct reference to the Lander object. Main purpose -> It removes drag & drop , Guarantee only ONE(Lander as singleton , not its copies as lander 1 and lander 2, that's why its static.) exists and Global access by lander.instance. with events subscription. Singleton is made by 'static' keyword. { get; private set; } --> anyone can READ Lander.Instance, but only Lander class itself can SET it. Inside Awake() { Instance = this; } is allowed, outside is blocked, this is encapsulation. Summary: static itself is allowed with 2 landers by which you can have public static int totalLanders; to count how many landers exist. But public static Lander Instance that holds ONE lander only works when you guarantee there is only ONE Lander.That's why seniors say: Only Managers should be Singleton, Player should NOT. GameManager, AudioManager = Singleton. Lander, Enemy, Bullet = NOT Singleton.That is the whole singleton trick: one static field holds only one instance.Hence static means Lander belongs to the CLASS itself, not to any object. There is only ONE memory slot for Lander.Instance for the whole game.
 
 
@@ -35,30 +37,50 @@ public class Lander : MonoBehaviour {
         tooSteepAngle,                                                           // on pad but dotVector < 0.90f = tilted >25 degrees
         toohardLanding,                                                          // on pad but relativeVelocity > 4f = too fast
 }
+    public enum State {
+        WaitingToStart,
+        Normal,
+    }
 
     private Rigidbody2D LanderRigidbody2D ;
     private float fuelAmount ;                                                     // current fuel left in tank, will go 10 -> 0
     private float fuelAmountMax = 10f ;                                            // max capacity of tank, 10 units
+    private State state ;                                         
 
     private void Awake() {
-
-        LanderRigidbody2D = GetComponent<Rigidbody2D>() ;
-
+        
         Instance = this ;                                                          // Assign the current instance of the Lander class to the static Instance property, allowing global access to this instance. 'this' = the real Lander GameObject in your scene. Now the static CLASS slot points to the one real INSTANCE in scene.
         
         fuelAmount = fuelAmountMax ;                                               // Awake/Start: fill tank full on game start, 10 = 10
+        state = State.WaitingToStart;
+
+        LanderRigidbody2D = GetComponent<Rigidbody2D>() ;
+        LanderRigidbody2D.gravityScale = 0f ;
     }
     private void FixedUpdate(){
         OnBeforeForce?.Invoke(this, EventArgs.Empty) ;                             // fire off / invoke the OnBeforeForce event before checking for any thruster forces being applied. This allows any subscribers/listeners to prepare for the upcoming forces.
              
+        switch (state) {
+            default:
+
+            case State.WaitingToStart:
+
+            if (Keyboard.current.upArrowKey.isPressed || Keyboard.current.leftArrowKey.isPressed || Keyboard.current.rightArrowKey.isPressed) {        // if any of the arrow keys are pressed either simultaneously or individually, the fuel is consumed per second and we call the ConsumeFuel() function to decrease the fuel amount.
+            ConsumeFuel();  
+            LanderRigidbody2D.gravityScale = GRAVITY_NORMAL ;
+            state = State.Normal;                                            
+            }
+            break;
+
+            case State.Normal:
         
-        if (fuelAmount <= 0f){                                                     // if fuel is 0 or less then we dont want to apply any force so we just return(the funtion does not do any work) and lander stops working.
+            if (fuelAmount <= 0f){                                                     // if fuel is 0 or less then we dont want to apply any force so we just return(the funtion does not do any work) and lander stops working.
             return;    
         }
 
         if (Keyboard.current.upArrowKey.isPressed || Keyboard.current.leftArrowKey.isPressed || Keyboard.current.rightArrowKey.isPressed) {        // if any of the arrow keys are pressed either simultaneously or individually, the fuel is consumed per second and we call the ConsumeFuel() function to decrease the fuel amount.
             
-            ConsumeFuel();                                             
+            ConsumeFuel();                                            
         }
 
         if (Keyboard.current.upArrowKey.isPressed ){
@@ -82,6 +104,11 @@ public class Lander : MonoBehaviour {
 
             OnLeftForce?.Invoke(this, EventArgs.Empty) ;                           // fire off / invoke the OnLeftForce event when the left arrow key is pressed and the leftward torque is applied. This allows any subscribers/listeners to react to the leftward force being applied.
         }
+            
+            break;
+            
+        }     
+        
     }
     
     // FLOW: [Unity] Lander hits Terrain -> [Unity] creates Collision2D arg with speed/hit data -> [Unity->Code] calls OnCollisionEnter2D(arg) param gets it -> [Code] if speed>4 log "hard" & return to Unity else if Dot(up,nose)<0.9 log "steep" & return to Unity else log "success" & return to Unity   
