@@ -40,7 +40,7 @@ public class Lander : MonoBehaviour {
         tooSteepAngle,                                                           // on pad but dotVector < 0.90f = tilted >25 degrees
         toohardLanding,                                                          // on pad but relativeVelocity > 4f = too fast 
     }
-    public enum State {
+    public enum State {                                                         // Here the State enums names are used as labels which seprate the logic between these three cases WaitingToStart , Normal and GameOver.
         WaitingToStart,
         Normal,
         GameOver,
@@ -64,7 +64,7 @@ public class Lander : MonoBehaviour {
     private void FixedUpdate(){
         OnBeforeForce?.Invoke(this, EventArgs.Empty) ;                             // fire off / invoke the OnBeforeForce event before checking for any thruster forces being applied. This allows any subscribers/listeners to prepare for the upcoming forces.
              
-        switch (state) {
+        switch (state) {                                                           // Here switch shows that states as labels in which the waiting state(EaitingToStart) is default i,e nothing works, lander floats in air ,no gravity,no thrusters and fuel consumtion and no animation , if any key is pressed state becomes normal, all things go normal and works, and when lander lands/crashes state labels that game is over and al the working things breaks/deosn't work and landed UI is shown.This three states sepration as three labels, is just for the sake of seprating waiting ,working and not working logics of all lander input components.  
             default:
 
             case State.WaitingToStart:

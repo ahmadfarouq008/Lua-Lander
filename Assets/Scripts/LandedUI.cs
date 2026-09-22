@@ -1,10 +1,21 @@
 using TMPro;
+using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LandedUI : MonoBehaviour {
 
     [SerializeField] private TextMeshProUGUI titleTextMesh;                   // drag Title text - shows SUCCESS or CRASH
     [SerializeField] private TextMeshProUGUI statsTextMesh;                   // drag Stats text - shows speed, angle, x, score
+    [SerializeField] private Button nextButton ;                              // Reference to the UI Button (Next / Restart).
+
+
+    private void Awake(){
+
+        nextButton.onClick.AddListener ( ()=> {                              // nextButton.onClick = UnityEvent that fires when player clicks button and this event is used for click logics. AddListener() = Subscribe - tell button what function to call on click. () => {... } = lambda function - anonymous/short form function with no name,no parameters and written in one line. Using lambda function because restart logic is only 1 line and only used by this button,so Use lambda when function is small, used only ONCE, and you don't want to make a separate named method.If we dont create lambda the we do this :- "nextButton.onClick.AddListener(RestartGame); n void RestartGame() { SceneManager.LoadScene(0); }
+           SceneManager.LoadScene(0) ;                                       // LoadScene(0) = Load scene at Build Index 0 (your first Lander level)
+        }) ;    
+    }
 
     private void Start(){
         Lander.Instance.OnLanded += Lander_OnLanded ;

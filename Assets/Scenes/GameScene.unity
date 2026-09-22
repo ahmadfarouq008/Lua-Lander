@@ -2882,6 +2882,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LandedUI
   titleTextMesh: {fileID: 235256298}
   statsTextMesh: {fileID: 915001259}
+  nextButton: {fileID: 606947638}
 --- !u!4 &1742331562 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7777506112856376982, guid: 491bc9f68306cad40a65002e796205eb, type: 3}
