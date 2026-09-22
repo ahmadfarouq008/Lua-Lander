@@ -1,14 +1,18 @@
+using System.Collections;
 using UnityEngine;
 
 public class LanderVisuals : MonoBehaviour {
 
     // References to the particle systems for the left, middle, and right thrusters, which will be used to visually represent the thruster forces being applied to the lander:
     
-    [SerializeField] ParticleSystem leftThrusterParticleSystem ;
-    [SerializeField] ParticleSystem middleThrusterParticleSystem ;
-    [SerializeField] ParticleSystem rightThrusterParticleSystem ;
+    [SerializeField] private ParticleSystem leftThrusterParticleSystem ;
+    [SerializeField] private ParticleSystem middleThrusterParticleSystem ;
+    [SerializeField] private ParticleSystem rightThrusterParticleSystem ;
+    [SerializeField] private GameObject landerExplosionVfx ;                                          // WHAT to spawn - Explosion prefab from Inspector
+
+
     private Lander lander ;                                                                           // reference to the Lander script, which will be used to subscribe to the events declared in the Lander script and react to the thruster forces being applied.
-    
+
     private void Awake(){
 
         lander = GetComponent<Lander>() ;                                                            // stores the lander script reference in the lander variable, which will be used to subscribe to the events declared in the Lander script and react to the thruster forces being applied.
@@ -47,5 +51,23 @@ public class LanderVisuals : MonoBehaviour {
         
         ParticleSystem.EmissionModule emissionModule = particleSystem.emission ;                     // EmissionModule means the emission of particles from the particle system, which is used to visually represent the thruster forces being applied to the lander. The emission module is a property of the particle system that controls how particles are emitted from the particle system. The emission module has a property called "enabled" that can be set to true or false to enable or disable the emission of particles from the particle system. The SetEnabledThrusterParticleSystem function takes a ParticleSystem and a bool as parameters and sets the enabled property of the emission module of the particle system to the value of the bool parameter. This allows the LanderVisuals script to react to the thruster forces being applied by enabling or disabling the emission of particles from the particle systems for the left, middle, and right thrusters.
         emissionModule.enabled = enabled;  
+    }
+
+    private void Start(){
+        lander.OnLanded += Lander_OnLanded ;
+    }
+
+    private void Lander_OnLanded(object sender,Lander.OnLandedEventArgs e){
+
+        switch (e.landingType) {                                                                     // if any of these three cases , run the Instantiate() and SetActive(false) code.
+            case Lander.LandingType.crashedOnTerrain :
+            case Lander.LandingType.tooSteepAngle :
+            case Lander.LandingType.toohardLanding :
+
+            Instantiate (landerExplosionVfx,transform.position,Quaternion.identity) ;                 // Instantiate() = Spawn explosion clone, landerExplosionVfx = Clone the explosion prefab ,transform.position = WHERE: At lander's current position when crashed , Quaternion.identity = ROTATION: With 0 rotation (straight).
+            gameObject.SetActive(false) ;                                                             // Hide lander visuals so only explosion is visible ,gameObject here is LanderVisuals object, NOT Lander logic , If we don't hide, you see lander + explosion overlapping ,Make invisible, not Destroy - so we can reuse on retry.
+
+            break ;
+        }
     }
 }

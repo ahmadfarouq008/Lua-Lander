@@ -14,25 +14,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentVersion: 1.00
   subtype: lunarLanderFree
-  lastShownTimestamp: 1789505120
+  lastShownTimestamp: 1790103535
   lastUpdateResponse:
     version: 1.00
     versionUrl: https://unitycodemonkey.com
-  checkedLastUpdateTimestamp: 1789505121
+  checkedLastUpdateTimestamp: 1790103536
   lastQOTDResponse:
-    questionId: 342
-    questionText: 'What is the result of this code:
-
-      <p>int money = 2000000000;
-      // $2 billion</p>
-
-      <p>money += 1000000000; // Adding $1 billion</p>'
-    answerA: money == 3000000000
-    answerB: money == -1294967296
-    answerC: money == 0
-    answerD: 
+    questionId: 345
+    questionText: How should you store the health of each unit in your game?
+    answerA: public int health;
+    answerB: private int health;
+    answerC: public static int health;
+    answerD: private int h;
     answerE: 
-  lastQotdTimestamp: 1789505121
+  lastQotdTimestamp: 1790103536
   lastDynamicHeaderResponse:
     topImageUrl: https://codemonkeyexternal.blob.core.windows.net/external/Misc/codeMonkeyToolkit50Off.png
     topText: My Toolkit is 50% OFF! 50+ Tools and Elements to help you make games
@@ -41,20 +36,19 @@ MonoBehaviour:
     bottomText: Escape Tutorial Hell and level up your skills, try my Practice Lab
       for FREE!
     bottomLink: practicelab
-  lastDynamicHeaderTimestamp: 1789505121
+  lastDynamicHeaderTimestamp: 1790103536
   websiteLatestMessage:
     text: <a href="https://cmonkey.co/freecourses">Check out all my FREE courses!
       Click here!</a>
-  websiteLatestMessageTimestamp: 1789505121
+  websiteLatestMessageTimestamp: 1790103536
   websiteLatestVideos:
     videos:
+    - youTubeId: _gsL9MTNIA0
+      title: This SECRET Steam Update MASSIVELY helps indie devs?
+    - youTubeId: WFk_vADgnAo
+      title: TOP 10 NEW Games, Made with Unity! (AUGUST 2026)
+    - youTubeId: ndlWuuOw_zo
+      title: Get 70% OFF AWESOME Assets this Autumn!
     - youTubeId: Wp9I5WhT2OE
       title: Every Game you make should make your NEXT Game Easier!
-    - youTubeId: QNXgOuo7-Iw
-      title: TOP 10 FREE NEW Assets SEPTEMBER 2026!
-    - youTubeId: xhOkkGbL3mY
-      title: How to Make your game look AWESOME! (Unity Lighting and Post Processing
-        Tutorial)
-    - youTubeId: HOm1VQLKhX8
-      title: Unity 6.6 is here and it has 3 MASSIVE IMPROVEMENTS!
-  websiteLatestVideosTimestamp: 1789505121
+  websiteLatestVideosTimestamp: 1790103536
