@@ -14,20 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentVersion: 1.00
   subtype: lunarLanderFree
-  lastShownTimestamp: 1790103535
+  lastShownTimestamp: 1790354698
   lastUpdateResponse:
     version: 1.00
     versionUrl: https://unitycodemonkey.com
-  checkedLastUpdateTimestamp: 1790103536
+  checkedLastUpdateTimestamp: 1790354698
   lastQOTDResponse:
-    questionId: 345
-    questionText: How should you store the health of each unit in your game?
-    answerA: public int health;
-    answerB: private int health;
-    answerC: public static int health;
-    answerD: private int h;
+    questionId: 346
+    questionText: 'Does this code have an error?
+
+      <p>int myNewX = 10;</p>
+
+      <p>transform.position.x
+      = myNewX;</p>'
+    answerA: Yes
+    answerB: No
+    answerC: Only if GameObject does not have a Transform component
+    answerD: 
     answerE: 
-  lastQotdTimestamp: 1790103536
+  lastQotdTimestamp: 1790354698
   lastDynamicHeaderResponse:
     topImageUrl: https://codemonkeyexternal.blob.core.windows.net/external/Misc/codeMonkeyToolkit50Off.png
     topText: My Toolkit is 50% OFF! 50+ Tools and Elements to help you make games
@@ -36,11 +41,11 @@ MonoBehaviour:
     bottomText: Escape Tutorial Hell and level up your skills, try my Practice Lab
       for FREE!
     bottomLink: practicelab
-  lastDynamicHeaderTimestamp: 1790103536
+  lastDynamicHeaderTimestamp: 1790354698
   websiteLatestMessage:
     text: <a href="https://cmonkey.co/freecourses">Check out all my FREE courses!
       Click here!</a>
-  websiteLatestMessageTimestamp: 1790103536
+  websiteLatestMessageTimestamp: 1790354698
   websiteLatestVideos:
     videos:
     - youTubeId: _gsL9MTNIA0
@@ -51,4 +56,4 @@ MonoBehaviour:
       title: Get 70% OFF AWESOME Assets this Autumn!
     - youTubeId: Wp9I5WhT2OE
       title: Every Game you make should make your NEXT Game Easier!
-  websiteLatestVideosTimestamp: 1790103536
+  websiteLatestVideosTimestamp: 1790354698
