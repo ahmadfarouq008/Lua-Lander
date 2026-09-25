@@ -1,3 +1,5 @@
+Here is your updated README - copy paste this directly:
+
 # 🚀 Lua Lander - Unity 2D Beginner Project
 
 > Learning Unity 6.5 by building a complete 2D physics-based lunar landing game. Following Code Monkey's "Learn Unity 2D - Complete Beginner Course 2026".
@@ -254,6 +256,33 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 ### 🚀 Live Demo
 <img width="800" height="385" alt="Image" src="https://github.com/user-attachments/assets/68c15859-f0cb-43a3-bedf-aaab6d0d36a6" />
 
+#### ✅ Part 18: Start, Game Over, Restart - State Machine, Explosion & Retry Button [03:36:00]
+- **State Machine:** `public enum State { WaitingToStart, Normal, GameOver }` - ONE state at a time, no boolean conflict like `isStarted && isGameOver` both true
+- **Why State Machine vs Booleans?** Booleans allow invalid combos, spaghetti `if(isStarted &&!isGameOver)`. State machine = type-safe, `switch(state)` separates logic, scalable, add `Paused` easily
+- **Helper Method `SetState()` - DRY + Safety:** Was repeating `state = newState; OnStateChanged?.Invoke(...)`. Helper does both in one place. Prevents bug where you forget Invoke.
+  - **Shadowing Bug Fix:** `private void SetState(State state) { state = state; }` assigns param to itself, field never changes! Fix: `this.state = state;` or rename param to `newState`
+  - **My Final Code:** `private void SetState(State newState) { state = newState; OnStateChanged?.Invoke(this, new OnStateChangedEventArgs{ state = newState }); }`
+- **WaitingToStart State:** `gravityScale = 0f` in `Awake()` = floats, no fall. `FixedUpdate` `case WaitingToStart:` waits for any key `if(up/left/right)` then `gravityScale = GRAVITY_NORMAL` + `SetState(Normal)`
+- **Normal State:** Full physics `AddForce/ AddTorque`, thruster events firing, timer active
+- **GameOver State:** Added `case State.GameOver: break;` = do nothing, frozen, no input, no fuel drain. Timer stops, LandedUI shows banner
+- **Timer Controlled by State:** `private bool isTimerActive; Lander.Instance.OnStateChanged += Lander_OnStateChanged;` + `isTimerActive = e.state == Lander.State.Normal;` - `==` returns bool `true/false`. `Update(){ if(isTimerActive) time += Time.deltaTime; }`
+- **Explosion Logic in `LanderVisuals.cs` - SRP:** Logic in Lander, visuals in Visuals. Decoupled, Lander works even if Visuals deleted
+  - `[SerializeField] private GameObject landerExplosionVfx;` - drag PF_Explosion prefab
+  - `Start() { lander.OnLanded += Lander_OnLanded; }`
+  - `switch(e.landingType)` with fall-through: `case TooFast: case TooSteep: case WrongArea:` -> same crash code
+  - `Instantiate(landerExplosionVfx, transform.position, Quaternion.identity);` -> WHAT=explosion prefab, WHERE=crash pos, ROTATION=identity=0 rotation
+  - `gameObject.SetActive(false);` -> hide LanderVisuals sprite, only explosion visible. `Destroy()` would break Instance/Singleton, `SetActive(false)` allows Retry
+- **Restart Button - `LandedUI.cs`:**
+  - `[SerializeField] private Button nextButton;` - assign in Inspector
+  - `Awake() { nextButton.onClick.AddListener(() => { SceneManager.LoadScene(0); }); }`
+  - `onClick` = UnityEvent fired on click, `AddListener` = subscribe
+  - `() => {}` = lambda = anonymous function inline, creates `UnityAction` delegate
+  - `SceneManager.LoadScene(0)` = reload scene index 0 from Build Settings. Destroys all, recreates fresh -> `WaitingToStart`, gravity 0, fuel full, visuals `SetActive(true)` again
+  - **Why temporary?** Hardcoded `0` breaks if you add MainMenu later and reorder scenes. Better: `SceneManager.GetActiveScene().buildIndex` or `LoadScene("GameScene")` or `GameManager.ResetGame()` without reload
+
+### 🚀 Live Demo
+<img width="800" height="401" alt="Image" src="https://github.com/user-attachments/assets/5704052f-2f84-458a-954f-ac80875f3a57" />
+
 ### 🎮 Features Implemented
 - URP 2D Project Setup in Unity 6.5[x]
 - Import Assets & Post Processing (Bloom, Vignette)[x]
@@ -275,6 +304,11 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - Coins & Custom Events - CoinPickup marker, OnCoinPickup event, OnLandedEventArgs : EventArgs, EventHandler<OnLandedEventArgs>, e.finalScore passing[x]
 - Stats UI - Canvas + StatsUI.cs + TextMeshProUGUI statsTextMesh + Image fuelImage with fillAmount = GetFuelAmountNormalized(), Speed Arrows SetActive via GetSpeedX/Y, Scoreboard Score/Time/Speed display via GameManager.Instance + Lander.Instance[x]
 - Landed UI - Enums `LandingType` (success, crashedOnTerrain, tooSteepAngle, toohardLanding) + Custom EventArgs with 5 fields + Show()/Hide() + Start() vs Awake() event safety + My 4 Custom Banners: crashed (all stats 0), successful landing (all stats shown), landed too steep (angle shown), landed too hard (speed shown)[x]
+- Start State - WaitingToStart with gravityScale 0 + Input triggers SetState(Normal) + GRAVITY_NORMAL[x]
+- State Machine & SetState Helper - enum State {WaitingToStart, Normal, GameOver} + SetState(newState) helper DRY + Shadowing bug fix this.state = state + OnStateChanged event invocation[x]
+- Game Over State - State.GameOver + FixedUpdate case GameOver: break; frozen + timer stops via isTimerActive = e.state == Normal[x]
+- Explosion VFX & Invisible Logic - LanderVisuals.cs SRP + landerExplosionVfx + OnLanded subscription + switch fall-through for 3 crash types + Instantiate(VFX, transform.position, Quaternion.identity) + gameObject.SetActive(false) hide visuals not Destroy[SerializeField][x]
+- Restart System - Button nextButton + Awake() onClick.AddListener(() => SceneManager.LoadScene(0)) + lambda inline + why temporary hardcoded 0, better GetActiveScene().buildIndex[SerializeField][x]
 - [ ] Levels
 
 ### 🕹 Controls
