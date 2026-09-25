@@ -2212,9 +2212,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cb3b4d2381ecb04897594f1acc170d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  levelNumberToLoad: 1
+  levelNumberToLoad: 2
   gameLevelList:
   - {fileID: -6736744104880171106, guid: 8a56ce23b680d864b9a683c78f7b9d02, type: 3}
+  - {fileID: -6736744104880171106, guid: de11682af8c729b42a7ed2c7759b524e, type: 3}
 --- !u!4 &1504479155
 Transform:
   m_ObjectHideFlags: 0
