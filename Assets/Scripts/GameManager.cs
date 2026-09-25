@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
 
 public class GameManager : MonoBehaviour {
 
     public static GameManager Instance { get ; private set;}
 
-    [SerializeField] private int levelNumberToLoad ;                                   // this variable in serialized field means that level number we want to load , we set our desired level no. we want to load through inspector. 
+    private static int levelNumberToLoad = 1 ;                                             // this variable in serialized field means that level number we want to load , we set our desired level no. we want to load through inspector.These previous lines are not more applicable because we now made this a 'static' field(i.e GLOBAL LEVEL TRACKER - belongs to class, not GameObject, so it doesn't reset on scene reload .private = only GameManager can see it, static = stays alive (i.e. levelNumberTOload will remain 1 on starting level_1 ,remains 2 on countinuing to level_2 and so on, either the the game scene reloads/destroys the level prefab clone or not.Normal variable resets to Inspector value every time you reload scene. static does NOT reset. It stays alive in memory even when scene reloads. ) even after LoadScene(0). It is equal to 1 = game starts from Level 1) not a 'serialized' field (i.e, if not static then the levelNumberTOLoad value will reset to 1 in inspector every time you reload the scene through LoadScene(0) and the next level does not spawns on clicking countinue button.) . Why Static needed? When you do SceneManager.LoadScene(0), whole scene gets destroyed and recreated. If levelNumber was NOT static, it would go back to 1 again every time. You would never go to Level 2. With static, if you make it 2, after reload it stays 2, so Start() -> LoadCurrentLevel() will load Level_2.
     [SerializeField] private List<GameLevel> gameLevelList ;
 
 
@@ -76,6 +77,16 @@ public class GameManager : MonoBehaviour {
     public float GetTime(){
 
         return time ;
+    }
+
+    public void GoToNextLevel(){
+
+        levelNumberToLoad++ ;                                                              // Go from Level 1 to 2 .After reload, Unity calls Start() again -> LoadCurrentLevel() -> foreach finds levelNumber == 2 -> spawns Level_2.
+        SceneManager.LoadScene(0) ;                                                        // Reload scene index 0 (your main game scene). This destroys old Level_1 clone, Lander, coins and calls Start() again. Because levelNumberToLoad is static, after reload it is still 2, so LoadCurrentLevel() will spawn Level_2 now, but if levelNumberToLoad is not static then the scene is recreated and levelNumberToLoad will reload again as 1 and level_1 will be spawned again.  
+    }
+    public void RetryLevel(){                                                             
+        
+        SceneManager.LoadScene(0) ;                                                       //   Only reload scene, DON'T do ++. So levelNumberToLoad stays 1, Level_1 spawns again
     }
 
 }
