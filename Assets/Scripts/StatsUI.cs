@@ -27,9 +27,10 @@ public class StatsUI : MonoBehaviour{
         fuelImage.fillAmount = Lander.Instance.GetFuelAmountNormalized() ;          // get 0-1 fuel from Lander singleton, set Image fillAmount, yellow fuel bar image reduces horizontally (because of fill amount property from 0 - 1) as fuel drains.
 
         statsTextMesh.text =                                                        // set TMP text to multi-line string
-            GameManager.Instance.GetScore() + "\n" +                                // line 1: score from GameManager singleton
-            Mathf.Round(GameManager.Instance.GetTime()) + "\n" +                    // line 2: time, Rounded to no decimal
-            Mathf.Abs(Mathf.Round(Lander.Instance.GetSpeedX() * 10f) ) + "\n" +     // line 3: horizontal speed *10 for readability as large value, Round + Abs = no negative sign and deimal.
-            Mathf.Abs(Mathf.Round (Lander.Instance.GetSpeedY() * 10f) ) ;           // line 4: vertical speed *10 for readability as large value, Abs to get only positive vlaues.
+            GameManager.Instance.GetLevelNumberToLoad() + "\n" +                    // current loaded level number from GameManager singleton
+            GameManager.Instance.GetScore() + "\n" +                                // Score from GameManager singleton
+            Mathf.Round(GameManager.Instance.GetTime()) + "\n" +                    // Time, Rounded to no decimal
+            Mathf.Abs(Mathf.Round(Lander.Instance.GetSpeedX() * 10f) ) + "\n" +     // Horizontal speed *10 for readability as large value, Round + Abs = no negative sign and deimal.
+            Mathf.Abs(Mathf.Round (Lander.Instance.GetSpeedY() * 10f) ) ;           // Vertical speed *10 for readability as large value, Abs to get only positive vlaues.
     }
 }

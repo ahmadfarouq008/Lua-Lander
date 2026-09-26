@@ -88,6 +88,10 @@ public class GameManager : MonoBehaviour {
         
         SceneManager.LoadScene(0) ;                                                       //   Only reload scene, DON'T do ++. So levelNumberToLoad stays 1, Level_1 spawns again
     }
+    public int GetLevelNumberToLoad() {
+
+        return levelNumberToLoad ;                                                        // the getter function of current level that is loaded.used this call in StatsUI.cs and to write in there in stats text . 
+    }
 
 }
 
