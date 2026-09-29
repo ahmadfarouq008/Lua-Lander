@@ -1,4 +1,4 @@
-Here is your updated README - copy paste this directly:
+Here is your updated README with **Levels** added - rest untouched:
 
 # 🚀 Lua Lander - Unity 2D Beginner Project
 
@@ -283,6 +283,21 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 ### 🚀 Live Demo
 <img width="800" height="401" alt="Image" src="https://github.com/user-attachments/assets/5704052f-2f84-458a-954f-ac80875f3a57" />
 
+#### ✅ Part 19: Levels - Prefab Level System, Static Persistence & Next Level Flow [04:50:00]
+- **Why Prefabs not Separate Scenes?** One main scene holds Lander, Cinemachine, Canvas, Managers. Levels are just content prefabs (terrain + pads + pickups + spawn flag). Swapping content via `Instantiate` is faster than duplicating full scenes. Easy to add Level_3, Level_10 without re-setup.
+- **GameLevel.cs - Level Blueprint:** `[SerializeField] private int levelNumber; [SerializeField] private Transform landerStartPositionTransform;` + getters `GetLevelNumber()` and `GetLanderStartPosition()`. LevelNumber = ID card, LanderStartPosition = where to spawn this level.
+- **Prefab Workflow:** Select Level_1 in Hierarchy (terrain + all pads + fuels + coins + LanderStartPosition flag) -> Create Prefab `PF_Level_1`. Repeat for Level_2. Now Project has blueprints, not just scene objects.
+- **GameManager - List of Levels:** `[SerializeField] private List<GameLevel> gameLevelList;` - Drag PF_Level_1, PF_Level_2 in Inspector. Single source of truth for all available levels.
+- **Static Persistence - The Core Fix:** `private static int levelNumberToLoad = 1;` - `static` = belongs to CLASS, not instance, lives in RAM after `LoadScene(0)`. `[SerializeField]` + `static` never works - Unity doesn't serialize static, Inspector can't show it. Private static can't be seen by other scripts, so we add getter.
+- **LoadCurrentLevel():** Called in `Start()`. `foreach(GameLevel gameLevel in gameLevelList)` -> `if(gameLevel.GetLevelNumber() == levelNumberToLoad)` -> `GameLevel spawnedGameLevel = Instantiate(gameLevel, Vector3.zero, Quaternion.identity);` + `Lander.Instance.transform.position = spawnedGameLevel.GetLanderStartPosition();` - Clone at origin + move Lander to flag.
+- **GoToNextLevel() vs RetryLevel():** `public void GoToNextLevel(){ levelNumberToLoad++; SceneManager.LoadScene(0); }` -> ++ then reload, static stays 2 so Level_2 loads. `public void RetryLevel(){ SceneManager.LoadScene(0); }` -> reload only, same level.
+- **LandedUI - Action Callback Pattern:** `private Action nextButtonClickAction;` - Box that holds a function. `Awake(){ nextButton.onClick.AddListener(()=>{ nextButtonClickAction(); }); }` - Button always calls whatever is inside Action.
+- **Lander_OnLanded Decision:** `if(e.landingType == success){ title="SUCCESSFUL LANDING!"; button="CONTINUE"; nextButtonClickAction = GameManager.Instance.GoToNextLevel; } else { title="CRASHED!/TOO HARD!/TOO STEEP!"; button="RETRY"; nextButtonClickAction = GameManager.Instance.RetryLevel; }` - One button, behavior changes based on landing type. Clean, no if inside click.
+- **Getter for UI:** `public int GetLevelNumberToLoad(){ return levelNumberToLoad; }` - Private static can't be accessed directly, getter provides read-only access. Used in `statsTextMesh.text = GameManager.Instance.GetLevelNumberToLoad() + "\n" +...` to show current level.
+- **Why `Vector3.zero` + `Quaternion.identity`?** Levels designed at origin, so spawn at (0,0,0) with 0 rotation keeps colliders aligned.
+- **Score Persistence:** Same as levelNumber - make total score `static` too, otherwise `LoadScene(0)` resets it. Or use `PlayerPrefs` / `DontDestroyOnLoad`, but tutorial uses static for simplicity.
+- **Scalability:** Want Level_3? Duplicate prefab, set `levelNumber = 3`, add to `gameLevelList`. Works for 100 levels, no code change.
+  
 ### 🎮 Features Implemented
 - URP 2D Project Setup in Unity 6.5[x]
 - Import Assets & Post Processing (Bloom, Vignette)[x]
@@ -309,7 +324,7 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - Game Over State - State.GameOver + FixedUpdate case GameOver: break; frozen + timer stops via isTimerActive = e.state == Normal[x]
 - Explosion VFX & Invisible Logic - LanderVisuals.cs SRP + landerExplosionVfx + OnLanded subscription + switch fall-through for 3 crash types + Instantiate(VFX, transform.position, Quaternion.identity) + gameObject.SetActive(false) hide visuals not Destroy[SerializeField][x]
 - Restart System - Button nextButton + Awake() onClick.AddListener(() => SceneManager.LoadScene(0)) + lambda inline + why temporary hardcoded 0, better GetActiveScene().buildIndex[SerializeField][x]
-- [ ] Levels
+- Levels - Prefab Level System + GameLevel.cs (levelNumber + landerStartPositionTransform) + gameLevelList List<GameLevel> + LoadCurrentLevel() foreach + Instantiate at Vector3.zero + static levelNumberToLoad persistence across LoadScene(0) + GoToNextLevel() ++ + RetryLevel() + Action nextButtonClickAction callback + Lander_OnLanded 4 types (success -> CONTINUE + GoToNextLevel, crashed/tooHard/tooSteep -> RETRY + RetryLevel) + GetLevelNumberToLoad() getter for StatsUI + static can't be SerializeField + score persistence via static[x]
 
 ### 🕹 Controls
 - **Up Arrow / W** - Thrust forward (where nose points)
