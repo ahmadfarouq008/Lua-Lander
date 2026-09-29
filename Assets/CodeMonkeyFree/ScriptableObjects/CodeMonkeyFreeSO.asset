@@ -14,25 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentVersion: 1.00
   subtype: lunarLanderFree
-  lastShownTimestamp: 1790354698
+  lastShownTimestamp: 1790704868
   lastUpdateResponse:
     version: 1.00
     versionUrl: https://unitycodemonkey.com
-  checkedLastUpdateTimestamp: 1790354698
+  checkedLastUpdateTimestamp: 1790704868
   lastQOTDResponse:
-    questionId: 346
-    questionText: 'Does this code have an error?
+    questionId: 347
+    questionText: 'Does this code compile?
 
-      <p>int myNewX = 10;</p>
+      <p>private void SetTarget(Transform
+      target) {</p>
 
-      <p>transform.position.x
-      = myNewX;</p>'
-    answerA: Yes
-    answerB: No
-    answerC: Only if GameObject does not have a Transform component
+      <p>&nbsp; &nbsp; GameObject targetGameObject = target;</p>
+
+      <p>}</p>'
+    answerA: No
+    answerB: Yes
+    answerC: Yes if target is not null
     answerD: 
     answerE: 
-  lastQotdTimestamp: 1790354698
+  lastQotdTimestamp: 1790704868
   lastDynamicHeaderResponse:
     topImageUrl: https://codemonkeyexternal.blob.core.windows.net/external/Misc/codeMonkeyToolkit50Off.png
     topText: My Toolkit is 50% OFF! 50+ Tools and Elements to help you make games
@@ -41,19 +43,19 @@ MonoBehaviour:
     bottomText: Escape Tutorial Hell and level up your skills, try my Practice Lab
       for FREE!
     bottomLink: practicelab
-  lastDynamicHeaderTimestamp: 1790354698
+  lastDynamicHeaderTimestamp: 1790704868
   websiteLatestMessage:
     text: <a href="https://cmonkey.co/freecourses">Check out all my FREE courses!
       Click here!</a>
-  websiteLatestMessageTimestamp: 1790354698
+  websiteLatestMessageTimestamp: 1790704868
   websiteLatestVideos:
     videos:
+    - youTubeId: MotmZgCod9A
+      title: MASSIVE Unity Save System Tutorial!
+    - youTubeId: A9Qlll9dDkY
+      title: TOP 10 NEW Systems and Tools SEPTEMBER 2026! | Unity Asset Store
+    - youTubeId: ppFshgFOgXU
+      title: How to setup Unity with AI Agents and CLI!
     - youTubeId: _gsL9MTNIA0
       title: This SECRET Steam Update MASSIVELY helps indie devs?
-    - youTubeId: WFk_vADgnAo
-      title: TOP 10 NEW Games, Made with Unity! (AUGUST 2026)
-    - youTubeId: ndlWuuOw_zo
-      title: Get 70% OFF AWESOME Assets this Autumn!
-    - youTubeId: Wp9I5WhT2OE
-      title: Every Game you make should make your NEXT Game Easier!
-  websiteLatestVideosTimestamp: 1790354698
+  websiteLatestVideosTimestamp: 1790704868

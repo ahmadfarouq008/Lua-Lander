@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Cinemachine;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,7 +11,7 @@ public class GameManager : MonoBehaviour {
 
     private static int levelNumberToLoad = 1 ;                                             // this variable in serialized field means that level number we want to load , we set our desired level no. we want to load through inspector.These previous lines are not more applicable because we now made this a 'static' field(i.e GLOBAL LEVEL TRACKER - belongs to class, not GameObject, so it doesn't reset on scene reload .private = only GameManager can see it, static = stays alive (i.e. levelNumberTOload will remain 1 on starting level_1 ,remains 2 on countinuing to level_2 and so on, either the the game scene reloads/destroys the level prefab clone or not.Normal variable resets to Inspector value every time you reload scene. static does NOT reset. It stays alive in memory even when scene reloads. ) even after LoadScene(0). It is equal to 1 = game starts from Level 1) not a 'serialized' field (i.e, if not static then the levelNumberTOLoad value will reset to 1 in inspector every time you reload the scene through LoadScene(0) and the next level does not spawns on clicking countinue button.) . Why Static needed? When you do SceneManager.LoadScene(0), whole scene gets destroyed and recreated. If levelNumber was NOT static, it would go back to 1 again every time. You would never go to Level 2. With static, if you make it 2, after reload it stays 2, so Start() -> LoadCurrentLevel() will load Level_2.
     [SerializeField] private List<GameLevel> gameLevelList ;
-
+    [SerializeField] private CinemachineCamera cinemachineCamera ;
 
     private int coinScore ;                                                            // Variable to keep track of the player's score, which will be incremented when a coin is picked up.
     private float time; 
@@ -22,18 +23,21 @@ public class GameManager : MonoBehaviour {
 
     private void Start(){
 
-        Lander.Instance.OnCoinPickUp += Lander_OnCoinPickUp ;                    // Subscribe to the OnCoinPickUp event from the Lander script. When the event is triggered, the Lander_OnCoinPickUp method will be called.Lander.instance is just a refference to the Lander script(insted of declaring Lander then drag and drop things), which is a singleton class that manages the lander's behavior and state. 
-        Lander.Instance.OnLanded += Lander_OnLanded ;                            // Subscribe to the OnLanded event from the Lander script. When the event is triggered, the Lander_OnLanded method will be called. This allows the GameManager to react to the lander successfully landing on a landing pad and handle scoring or other game logic related to landing.
+        Lander.Instance.OnCoinPickUp += Lander_OnCoinPickUp ;                                                // Subscribe to the OnCoinPickUp event from the Lander script. When the event is triggered, the Lander_OnCoinPickUp method will be called.Lander.instance is just a refference to the Lander script(insted of declaring Lander then drag and drop things), which is a singleton class that manages the lander's behavior and state. 
+        Lander.Instance.OnLanded += Lander_OnLanded ;                                                        // Subscribe to the OnLanded event from the Lander script. When the event is triggered, the Lander_OnLanded method will be called. This allows the GameManager to react to the lander successfully landing on a landing pad and handle scoring or other game logic related to landing.
         Lander.Instance.OnStateChanged += Lander_OnStateChanged ;       
 
-        LoadCurrentLevel() ;                                                     // Call this function at start to load the correct level .
-    }
+        LoadCurrentLevel() ;                                                                                 // Call this function at start to load the correct level .
+    } 
     private void Lander_OnStateChanged(object sender, Lander.OnStateChangedEventArgs e){
 
         if(e.stateAsEventArg == Lander.State.Normal) {
             isTimerActive = true;  
         } else {
             isTimerActive = false; 
+        }
+        if (e.stateAsEventArg == Lander.State.Normal ) {
+            cinemachineCamera.Target.TrackingTarget = Lander.Instance. transform ;                           // Switch camera target from level overview to Lander itself - now camera follows Lander
         }
     }
     private void Update(){
@@ -43,15 +47,17 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    private void LoadCurrentLevel(){                                                                       // Our custom function - finds and spawns the right level                                                    
+    private void LoadCurrentLevel(){                                                                          // Our custom function - finds and spawns the right level                                                    
 
-        foreach (GameLevel gameLevel in gameLevelList){                                                    // LOOP logic : Go through every Level_1,2,3... prefab inside gameLevelList one by one. foreach = Loop keyword. Means For each thing inside a list, do this. GameLevel = Type (only GameLevel allowed). gameLevel = temporary variable, holds current prefab in this loop (first Level_1, then Level_2). in = inside. gameLevelList = Menu bag/list containing all level prefabs [Level_1, Level_2 so on...] . GameLevel gameLevel = Blueprint/Each parent prefab level, in unity Project. 
+        foreach (GameLevel gameLevel in gameLevelList){                                                       // LOOP logic : Go through every Level_1,2,3... prefab inside gameLevelList one by one. foreach = Loop keyword. Means For each thing inside a list, do this. GameLevel = Type (only GameLevel allowed). gameLevel = temporary variable, holds current prefab in this loop (first Level_1, then Level_2). in = inside. gameLevelList = Menu bag/list containing all level prefabs [Level_1, Level_2 so on...] . GameLevel gameLevel = Blueprint/Each parent prefab level, in unity Project. 
 
-            if (gameLevel.GetLevelNumber() == levelNumberToLoad){                                          // CONDITION logic : if the level no. we want to load is equal to any level no. indide the list then load then load that level which are similar/equal. gameLevel here = current level no. prefab we are checking.
+            if (gameLevel.GetLevelNumber() == levelNumberToLoad){                                             // CONDITION logic : if the level no. we want to load is equal to any level no. indide the list then load then load that level which are similar/equal. gameLevel here = current level no. prefab we are checking.
 
-                GameLevel spawnedGameLevel = Instantiate (gameLevel,Vector3.zero,Quaternion.identity) ;    // SPAWN logic: Clone the matching blueprint/level prefab inisde project into the game scene. GameLevel = Type of clone (because we cloned GameLevel prefab).spawnedGameLevel = variable to store the REAL cloned level in Hierarchy (not blueprint in Project). Hence GameLevel spawnedGameLevel = Real copy in game Scene, which is detroyed later when level is completed and next button is clicked. Instantiate() = Unity clone/photocopy/spawn function. gameLevel = WHAT to clone (the matched prefab, e.g. Level_1). Vector3.zero = WHERE to spawn ,the level prefab at (0,0,0) world origin, because level designed at origin.Quaternion.identity = Rotation, means no rotation (0 degrees). 
+                GameLevel spawnedGameLevel = Instantiate (gameLevel,Vector3.zero,Quaternion.identity) ;       // SPAWN logic: Clone the matching blueprint/level prefab inisde project into the game scene. GameLevel = Type of clone (because we cloned GameLevel prefab).spawnedGameLevel = variable to store the REAL cloned level in Hierarchy (not blueprint in Project). Hence GameLevel spawnedGameLevel = Real copy in game Scene, which is detroyed later when level is completed and next button is clicked. Instantiate() = Unity clone/photocopy/spawn function. gameLevel = WHAT to clone (the matched prefab, e.g. Level_1). Vector3.zero = WHERE to spawn ,the level prefab at (0,0,0) world origin, because level designed at origin.Quaternion.identity = Rotation, means no rotation (0 degrees). 
 
-                Lander.Instance.transform.position = spawnedGameLevel.GetlanderStartPosition();            // LANDER POSITON PLACING logic: Put Lander at this level's flag position that we set visually by moving landrStartPosition game object in game scene. gameLevel.GetLanderStartPosition() = Ask spawned/cloned level in scene "where is your spawn flag?" returns Vector3 of child LanderStartPosition. 
+                Lander.Instance.transform.position = spawnedGameLevel.GetlanderStartPosition();               // LANDER POSITON PLACING logic: Put Lander at this level's flag position that we set visually by moving landrStartPosition game object in game scene. gameLevel.GetLanderStartPosition() = Ask spawned/cloned level in scene "where is your spawn flag?" returns Vector3 of child LanderStartPosition. 
+
+                cinemachineCamera.Target.TrackingTarget = spawnedGameLevel.GetCameraStartTargetTransform() ;  // Set camera to look at this level's overview point, NOT Lander yet - shows whole map in WaitingToStart
             }
         }
     }
