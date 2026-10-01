@@ -5,6 +5,7 @@ public class GameLevel : MonoBehaviour{                           // this script
     [SerializeField] int levelNumber ;                            // Level_1 prefab says levelNumber = 1, Level_2 says levelNumber = 2 and so on. This is self-identification.e.g. I am Level 1 and my spawn flag is this child (below line code).Its actually just a label of level no. on every level's prefab. 
     [SerializeField] Transform landerStartPositionTransform ;     // Each level needs its OWN spawn position. That's why this field exists.Invisible flag you can move visually to set the spawn position.The landerStartPosition child of level_1,2,3.. prefab is dragged in this serialized field for refference. 
     [SerializeField] Transform CameraStartTargetTransform ;       // Reference to empty GameObject in this level - where camera should look at start for overview, drag in prefab
+    [SerializeField] private float zoomedOutOrthographicSize ;    // How far zoomed out to see whole level - e.g. 40 for small, 70 for big levels. This is set in the prefab of each level_1,2,3.. in the inspector by ourselves.
     public int GetLevelNumber() {
         return levelNumber ;
     } 
@@ -15,5 +16,9 @@ public class GameLevel : MonoBehaviour{                           // this script
     } 
     public Transform GetCameraStartTargetTransform(){
         return CameraStartTargetTransform ;                       // Returns the Transform of overview object so GameManager can use it as camera target
-    }  
+    }
+
+    public float GetZoomedOutOrthographicSize(){
+        return zoomedOutOrthographicSize ;                        // Returns float zoom value for this level
+    }                               
 }

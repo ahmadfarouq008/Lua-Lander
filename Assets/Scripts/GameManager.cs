@@ -37,7 +37,10 @@ public class GameManager : MonoBehaviour {
             isTimerActive = false; 
         }
         if (e.stateAsEventArg == Lander.State.Normal ) {
+            
             cinemachineCamera.Target.TrackingTarget = Lander.Instance. transform ;                           // Switch camera target from level overview to Lander itself - now camera follows Lander
+            
+            CinemachineCameraZoom2D.Instance.SetNormalOrthographicSize() ;                                   // // Zoom IN from big overview size to normal gameplay size 10.                                                                  // Switch camera zoom from overview to normal zoomed in view of Lander
         }
     }
     private void Update(){
@@ -47,17 +50,14 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    private void LoadCurrentLevel(){                                                                          // Our custom function - finds and spawns the right level                                                    
-
-        foreach (GameLevel gameLevel in gameLevelList){                                                       // LOOP logic : Go through every Level_1,2,3... prefab inside gameLevelList one by one. foreach = Loop keyword. Means For each thing inside a list, do this. GameLevel = Type (only GameLevel allowed). gameLevel = temporary variable, holds current prefab in this loop (first Level_1, then Level_2). in = inside. gameLevelList = Menu bag/list containing all level prefabs [Level_1, Level_2 so on...] . GameLevel gameLevel = Blueprint/Each parent prefab level, in unity Project. 
-
-            if (gameLevel.GetLevelNumber() == levelNumberToLoad){                                             // CONDITION logic : if the level no. we want to load is equal to any level no. indide the list then load then load that level which are similar/equal. gameLevel here = current level no. prefab we are checking.
-
-                GameLevel spawnedGameLevel = Instantiate (gameLevel,Vector3.zero,Quaternion.identity) ;       // SPAWN logic: Clone the matching blueprint/level prefab inisde project into the game scene. GameLevel = Type of clone (because we cloned GameLevel prefab).spawnedGameLevel = variable to store the REAL cloned level in Hierarchy (not blueprint in Project). Hence GameLevel spawnedGameLevel = Real copy in game Scene, which is detroyed later when level is completed and next button is clicked. Instantiate() = Unity clone/photocopy/spawn function. gameLevel = WHAT to clone (the matched prefab, e.g. Level_1). Vector3.zero = WHERE to spawn ,the level prefab at (0,0,0) world origin, because level designed at origin.Quaternion.identity = Rotation, means no rotation (0 degrees). 
-
-                Lander.Instance.transform.position = spawnedGameLevel.GetlanderStartPosition();               // LANDER POSITON PLACING logic: Put Lander at this level's flag position that we set visually by moving landrStartPosition game object in game scene. gameLevel.GetLanderStartPosition() = Ask spawned/cloned level in scene "where is your spawn flag?" returns Vector3 of child LanderStartPosition. 
-
-                cinemachineCamera.Target.TrackingTarget = spawnedGameLevel.GetCameraStartTargetTransform() ;  // Set camera to look at this level's overview point, NOT Lander yet - shows whole map in WaitingToStart
+    private void LoadCurrentLevel(){                                                                                              // Our custom function - finds and spawns the right level                                                   
+        foreach (GameLevel gameLevel in gameLevelList){                                                                           // LOOP logic : Go through every Level_1,2,3... prefab inside gameLevelList one by one. foreach = Loop keyword. Means For each thing inside a list, do this. GameLevel = Type (only GameLevel allowed). gameLevel = temporary variable, holds current prefab in this loop (first Level_1, then Level_2). in = inside. gameLevelList = Menu bag/list containing all level prefabs [Level_1, Level_2 so on...] . GameLevel gameLevel = Blueprint/Each parent prefab level, in unity Project.
+            if (gameLevel.GetLevelNumber() == levelNumberToLoad){                                                                 // CONDITION logic : if the level no. we want to load is equal to any level no. indide the list then load then load that level which are similar/equal. gameLevel here = current level no. prefab we are checking
+                GameLevel spawnedGameLevel = Instantiate (gameLevel,Vector3.zero,Quaternion.identity) ;                           // SPAWN logic: Clone the matching blueprint/level prefab inisde project into the game scene. GameLevel = Type of clone (because we cloned GameLevel prefab).spawnedGameLevel = variable to store the REAL cloned level in Hierarchy (not blueprint in Project). Hence GameLevel spawnedGameLevel = Real copy in game Scene, which is detroyed later when level is completed and next button is clicked. Instantiate() = Unity clone/photocopy/spawn function. gameLevel = WHAT to clone (the matched prefab, e.g. Level_1). Vector3.zero = WHERE to spawn ,the level prefab at (0,0,0) world origin, because level designed at origin.Quaternion.identity = Rotation, means no rotation (0 degrees).
+                Lander.Instance.transform.position = spawnedGameLevel.GetlanderStartPosition();                                   // LANDER POSITON PLACING logic: Put Lander at this level's flag position that we set visually by moving landrStartPosition game object in game scene. gameLevel.GetLanderStartPosition() = Ask spawned/cloned level in scene "where is your spawn flag?" returns Vector3 of child LanderStartPosition.
+                cinemachineCamera.Target.TrackingTarget = spawnedGameLevel.GetCameraStartTargetTransform() ;                      // Set camera to look at this level's overview point, NOT Lander yet - shows whole map in WaitingToStart
+                
+                CinemachineCameraZoom2D.Instance.SetTargetOrthographicSize(spawnedGameLevel.GetZoomedOutOrthographicSize());      // Zoom OUT to this level's custom size to fit whole level on screen
             }
         }
     }
