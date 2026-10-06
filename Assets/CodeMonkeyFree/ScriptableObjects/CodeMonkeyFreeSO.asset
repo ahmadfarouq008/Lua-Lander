@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentVersion: 1.00
   subtype: lunarLanderFree
-  lastShownTimestamp: 1791140259
+  lastShownTimestamp: 1791303437
   lastUpdateResponse:
     version: 1.00
     versionUrl: https://unitycodemonkey.com
-  checkedLastUpdateTimestamp: 1791140259
+  checkedLastUpdateTimestamp: 1791303437
   lastQOTDResponse:
     questionId: 349
     questionText: Can Color ever be null?
@@ -27,7 +27,7 @@ MonoBehaviour:
     answerC: Yes, as Nullable
     answerD: 
     answerE: 
-  lastQotdTimestamp: 1791140259
+  lastQotdTimestamp: 1791303437
   lastDynamicHeaderResponse:
     topImageUrl: https://codemonkeyexternal.blob.core.windows.net/external/Misc/codeMonkeyToolkit50Off.png
     topText: My Toolkit is 50% OFF! 50+ Tools and Elements to help you make games
@@ -36,19 +36,19 @@ MonoBehaviour:
     bottomText: Escape Tutorial Hell and level up your skills, try my Practice Lab
       for FREE!
     bottomLink: practicelab
-  lastDynamicHeaderTimestamp: 1791140259
+  lastDynamicHeaderTimestamp: 1791303437
   websiteLatestMessage:
     text: <a href="https://cmonkey.co/freecourses">Check out all my FREE courses!
       Click here!</a>
-  websiteLatestMessageTimestamp: 1791140259
+  websiteLatestMessageTimestamp: 1791303437
   websiteLatestVideos:
     videos:
+    - youTubeId: iwDBrvKliV8
+      title: You should do the Dual Prototyping Strategy!
     - youTubeId: mQTcWsiP9nA
       title: Does 1000 Wishlists at announcement mean $1,000,000?
     - youTubeId: TPNjjCOjxB4
       title: How to Change Unity Graphics Settings Through Code! (Unity Tutorial)
     - youTubeId: sA8mwU_-OXc
       title: BEST NEW Visual Assets to INSPIRE YOU! (SEPTEMBER 2026)
-    - youTubeId: MotmZgCod9A
-      title: MASSIVE Unity Save System Tutorial!
-  websiteLatestVideosTimestamp: 1791140259
+  websiteLatestVideosTimestamp: 1791303437
