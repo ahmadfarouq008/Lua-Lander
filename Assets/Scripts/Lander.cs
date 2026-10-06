@@ -69,7 +69,7 @@ public class Lander : MonoBehaviour {
 
             case State.WaitingToStart:
 
-            if (Keyboard.current.upArrowKey.isPressed || Keyboard.current.leftArrowKey.isPressed || Keyboard.current.rightArrowKey.isPressed) {        // if any of the arrow keys are pressed either simultaneously or individually, the fuel is consumed per second and we call the ConsumeFuel() function to decrease the fuel amount.
+            if (GameInput.Instance.IsUpActionPressed() || GameInput.Instance.IsLeftActionPressed() || GameInput.Instance.IsRightActionPressed()) {        // if any of the arrow keys are pressed either simultaneously or individually, the fuel is consumed per second and we call the ConsumeFuel() function to decrease the fuel amount.
             ConsumeFuel();  
 
             LanderRigidbody2D.gravityScale = GRAVITY_NORMAL ;
@@ -84,26 +84,26 @@ public class Lander : MonoBehaviour {
             return;    
             }
     
-            if (Keyboard.current.upArrowKey.isPressed || Keyboard.current.leftArrowKey.isPressed || Keyboard.current.rightArrowKey.isPressed) {        // if any of the arrow keys are pressed either simultaneously or individually, the fuel is consumed per second and we call the ConsumeFuel() function to decrease the fuel amount.
+            if (GameInput.Instance.IsUpActionPressed() || GameInput.Instance.IsLeftActionPressed() || GameInput.Instance.IsRightActionPressed()) {        // if any of the arrow keys are pressed either simultaneously or individually, the fuel is consumed per second and we call the ConsumeFuel() function to decrease the fuel amount.
                 
                 ConsumeFuel();                                            
             }
     
-            if (Keyboard.current.upArrowKey.isPressed ){
+            if (GameInput.Instance.IsUpActionPressed() ){
     
                 float force = 700f ;
                 LanderRigidbody2D.AddForce(force * transform.up * Time.deltaTime);
     
                 OnUpForce?.Invoke(this, EventArgs.Empty) ;                             // fire off / invoke the OnUpForce event when the up arrow key is pressed and the upward force is applied. This allows any subscribers/listeners to react to the upward force being applied.
             }
-            if (Keyboard.current.rightArrowKey.isPressed){
+            if (GameInput.Instance.IsRightActionPressed()){
     
                 float turnSpeed = -100f ;
                 LanderRigidbody2D.AddTorque(turnSpeed * Time.deltaTime);
     
                 OnRightForce?.Invoke(this, EventArgs.Empty) ;                          // fire off / invoke the OnRightForce event when the right arrow key is pressed and the rightward torque is applied. This allows any subscribers/listeners to react to the rightward force being applied.
             }
-            if (Keyboard.current.leftArrowKey.isPressed){
+            if (GameInput.Instance.IsLeftActionPressed()){
     
                 float turnSpeed = +100f ;
                 LanderRigidbody2D.AddTorque(turnSpeed * Time.deltaTime);
