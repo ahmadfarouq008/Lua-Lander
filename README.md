@@ -1,5 +1,3 @@
-Here is your updated README with **Levels** added - rest untouched:
-
 # 🚀 Lua Lander - Unity 2D Beginner Project
 
 > Learning Unity 6.5 by building a complete 2D physics-based lunar landing game. Following Code Monkey's "Learn Unity 2D - Complete Beginner Course 2026".
@@ -297,6 +295,29 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - **Why `Vector3.zero` + `Quaternion.identity`?** Levels designed at origin, so spawn at (0,0,0) with 0 rotation keeps colliders aligned.
 - **Score Persistence:** Same as levelNumber - make total score `static` too, otherwise `LoadScene(0)` resets it. Or use `PlayerPrefs` / `DontDestroyOnLoad`, but tutorial uses static for simplicity.
 - **Scalability:** Want Level_3? Duplicate prefab, set `levelNumber = 3`, add to `gameLevelList`. Works for 100 levels, no code change.
+
+#### ✅ Part 20: Zoom - Per-Level Overview, Singleton & Smooth Lerp [05:05:00]
+- Why Zoomed-Out at Start? Player needs to see whole level layout - pads, obstacles, fuels. Small level needs 30 size, big level needs 70. So overview first, then zoom in to play.
+- GameLevel.cs - Per Level Data: Added 2 fields: [SerializeField] private Transform cameraStartTargetTransform + [SerializeField] private float zoomedOutOrthographicSize. Each prefab Level_1,2,3 has its own center empty object + custom zoom value. Getters GetCameraStartTargetTransform() + GetZoomedOutOrthographicSize().
+- CinemachineCameraZoom2D.cs - Dedicated Zoom Controller (SRP): Lander doesn't know about zoom. New script only for zoom.
+- public static CinemachineCameraZoom2D Instance { get; private set; } + Awake() { Instance = this; } = Singleton, GameManager can call Instance.Set...()
+- private const float NORMAL_ORTHOGRAPHIC_SIZE = 10f = constant definition, WHAT is normal, same for all levels, never changes, CAPS naming
+- private float targetOrthographicSize = NORMAL_ORTHOGRAPHIC_SIZE = current state, WHERE we are now, can be 10 or 60, changes at runtime. Fixed duplicate 10f bug by using const.
+- [SerializeField] private CinemachineCamera cinemachineCamera = drag Main Cinemachine Camera, we change its Lens.OrthographicSize
+- SetTargetOrthographicSize(float newSize) = public method, parameter comes from GameManager -> GameLevel.GetZoomedOutOrthographicSize() set in prefab Inspector
+- SetNormalOrthographicSize() = helper that calls SetTargetOrthographicSize(NORMAL_ORTHOGRAPHIC_SIZE) = reset to 10f
+- Bug Fix: [SerializeField] private const float = compile error. const can never be serialized / shown in Inspector. Remove [SerializeField].
+- Smooth Zoom with Lerp - Not Instant Snap:
+- Old: Lens.OrthographicSize = targetOrthographicSize = instant pop 60->10
+- New in Update(): Lens.OrthographicSize = Mathf.Lerp(current, target, Time.deltaTime * zoomSpeed)
+- Easy Logic: Lerp = "take where camera is NOW, take where we WANT it, move a little bit towards target every frame" - e.g: 30...28...26...10 smooth
+- zoomSpeed = 2f = tuning knob, 2=cinematic slow, 5=fast. Time.deltaTime = frame-rate independent, 30 FPS and 144 FPS same speed.
+- GameManager Integration:
+- LoadCurrentLevel(): cinemachineCamera.Target.TrackingTarget = spawnedGameLevel.GetCameraStartTargetTransform() + CinemachineCameraZoom2D.Instance.SetTargetOrthographicSize(spawnedGameLevel.GetZoomedOutOrthographicSize()) = overview + zoomed out
+- Lander_OnStateChanged(): if(state == Normal) -> TrackingTarget = Lander.Instance.transform + SetNormalOrthographicSize() = follow Lander + zoom IN according to each level's orthographic size.
+- 
+### 🚀 Live Demo
+<img width="800" height="420" alt="Image" src="https://github.com/user-attachments/assets/c0784d3b-db40-44f3-9c14-277b826f03db" />
   
 ### 🎮 Features Implemented
 - URP 2D Project Setup in Unity 6.5[x]
@@ -325,6 +346,7 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - Explosion VFX & Invisible Logic - LanderVisuals.cs SRP + landerExplosionVfx + OnLanded subscription + switch fall-through for 3 crash types + Instantiate(VFX, transform.position, Quaternion.identity) + gameObject.SetActive(false) hide visuals not Destroy[SerializeField][x]
 - Restart System - Button nextButton + Awake() onClick.AddListener(() => SceneManager.LoadScene(0)) + lambda inline + why temporary hardcoded 0, better GetActiveScene().buildIndex[SerializeField][x]
 - Levels - Prefab Level System + GameLevel.cs (levelNumber + landerStartPositionTransform) + gameLevelList List<GameLevel> + LoadCurrentLevel() foreach + Instantiate at Vector3.zero + static levelNumberToLoad persistence across LoadScene(0) + GoToNextLevel() ++ + RetryLevel() + Action nextButtonClickAction callback + Lander_OnLanded 4 types (success -> CONTINUE + GoToNextLevel, crashed/tooHard/tooSteep -> RETRY + RetryLevel) + GetLevelNumberToLoad() getter for StatsUI + static can't be SerializeField + score persistence via static[x]
+- Zoom System - Per-Level cameraStartTargetTransform + zoomedOutOrthographicSize + CinemachineCameraZoom2D Singleton (Instance + Awake) + NORMAL_ORTHOGRAPHIC_SIZE const = 10f vs targetOrthographicSize state + SetTargetOrthographicSize(target from GameLevel prefab) + SetNormalOrthographicSize() + Smooth Lerp with Time.deltaTime * zoomSpeed (2f) + TrackingTarget switch overview -> Lander in OnStateChanged[x]
 
 ### 🕹 Controls
 - **Up Arrow / W** - Thrust forward (where nose points)
