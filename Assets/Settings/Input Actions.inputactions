@@ -40,17 +40,6 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "7d3c197d-e1e5-4ae4-85c8-d62af7c2f91b",
-                    "path": "<Keyboard>/w",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "LanderUp",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "9d361193-17a2-4150-8a41-217225c6d6e3",
                     "path": "<Keyboard>/upArrow",
                     "interactions": "",
@@ -62,12 +51,23 @@
                 },
                 {
                     "name": "",
-                    "id": "6094077b-acdb-48e6-9c5b-2ff6ec4e904f",
-                    "path": "<Keyboard>/d",
+                    "id": "7d3c197d-e1e5-4ae4-85c8-d62af7c2f91b",
+                    "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "LanderRight",
+                    "action": "LanderUp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fc99461e-1b92-4b93-b2f7-dbd3ce6a7f0f",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LanderUp",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -84,6 +84,39 @@
                 },
                 {
                     "name": "",
+                    "id": "6094077b-acdb-48e6-9c5b-2ff6ec4e904f",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LanderRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4b01a3a1-4718-473e-a316-4937d71fe9eb",
+                    "path": "<Gamepad>/leftStick/right",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LanderRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5d4d7ce7-ffab-4c18-9255-a0ecf4b65be2",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LanderLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "21c85711-31ef-4f6b-8a4e-4a3be7663b29",
                     "path": "<Keyboard>/a",
                     "interactions": "",
@@ -95,8 +128,8 @@
                 },
                 {
                     "name": "",
-                    "id": "5d4d7ce7-ffab-4c18-9255-a0ecf4b65be2",
-                    "path": "<Keyboard>/leftArrow",
+                    "id": "71417e5a-4d8b-4c31-9ae1-1bb7efed5003",
+                    "path": "<Gamepad>/leftStick/left",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
