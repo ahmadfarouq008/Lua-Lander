@@ -315,9 +315,27 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - GameManager Integration:
 - LoadCurrentLevel(): cinemachineCamera.Target.TrackingTarget = spawnedGameLevel.GetCameraStartTargetTransform() + CinemachineCameraZoom2D.Instance.SetTargetOrthographicSize(spawnedGameLevel.GetZoomedOutOrthographicSize()) = overview + zoomed out
 - Lander_OnStateChanged(): if(state == Normal) -> TrackingTarget = Lander.Instance.transform + SetNormalOrthographicSize() = follow Lander + zoom IN according to each level's orthographic size.
-- 
+
 ### 🚀 Live Demo
 <img width="800" height="420" alt="Image" src="https://github.com/user-attachments/assets/c0784d3b-db40-44f3-9c14-277b826f03db" />
+
+#### ✅ Part 21: Input System Refactoring - Asset, GameInput Wrapper & Gamepad [05:20:00]
+- Why refactor? Old `Keyboard.current.wKey.isPressed` = hardcoded to keyboard only, no gamepad, no rebind, breaks if change key. New system = abstraction - Lander asks WHAT to do, not WHICH key
+- Created new Input Actions asset: Right-click Project > Create > Input Actions > named `InputActions` - single file that holds all keymaps, bindings, rebinds for whole game
+- Double-click asset opens Input Actions editor - has Action Maps, Actions, Bindings, Listen feature
+- Created Action Map `Player` - folder for gameplay controls. Later can have `UI` Map for menu - Enable one map at a time, no conflict
+- Inside `Player` Map created 3 Actions Type = Button: `LanderUp`, `LanderLeft`, `LanderRight` - Action = intent, not key
+- For each Action Add Binding > press Listen > press key on keyboard - LanderUp = `W` + `UpArrow`, LanderLeft = `A` + `LeftArrow`, LanderRight = `D` + `RightArrow` - one Action can have many keyboard bindings
+- Added Gamepad support to SAME Actions without code: LanderUp = `Gamepad buttonSouth` [Xbox A / PS X], LanderLeft = `Gamepad leftStick/left`, LanderRight = `Gamepad leftStick/right` - now W or UpArrow or ButtonSouth all trigger same Up thrust
+- Checked `Generate C# Class` in Inspector of asset + Apply - generates `InputActions.cs` script - allows `new InputActions()` + `inputActions.Player.LanderUp.IsPressed()` with auto-complete
+- Why Generate C#? Without it need to drag InputActionReference in Inspector. With it we can read asset directly from code, type-safe
+- Created `GameInput.cs` Singleton wrapper: `public static GameInput Instance { get; private set; }` + `private InputActions inputActions;` box initially null
+- `Awake() { Instance = this; inputActions = new InputActions(); inputActions.Enable(); }` - `new` creates object in RAM with all bindings, `Enable()` starts listening, forgot Enable = IsPressed always false
+- `OnDestroy() { inputActions.Disable(); }` - clean up, stop listening when scene reloads, prevents ghost inputs
+- Added bool helpers: `public bool IsUpActionPressed() { return inputActions.Player.LanderUp.IsPressed(); }` + `IsLeft...` + `IsRight...` - bool = true/false question, IsPressed returns bool, wrapper returns it, Lander does `if(true)`
+- Why private inputActions + public bool getter? Encapsulation - Lander can't do `Enable()/Disable()` or cheat bindings, only GameInput controls it, single source of truth
+- Refactored `Lander.cs`: Before `if(Keyboard.current.upArrowKey.isPressed || Keyboard.current.wKey.isPressed)` After `if(GameInput.Instance.IsUpActionPressed())` - same for Left/Right - clean, rebindable, gamepad-ready, no hardcoded keys
+- Why IsPressed() not performed event? performed fires ONCE when pressed - good for shoot. For thrust we need held check every FixedUpdate for AddForce - IsPressed true while held
   
 ### 🎮 Features Implemented
 - URP 2D Project Setup in Unity 6.5[x]
@@ -347,10 +365,18 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - Restart System - Button nextButton + Awake() onClick.AddListener(() => SceneManager.LoadScene(0)) + lambda inline + why temporary hardcoded 0, better GetActiveScene().buildIndex[SerializeField][x]
 - Levels - Prefab Level System + GameLevel.cs (levelNumber + landerStartPositionTransform) + gameLevelList List<GameLevel> + LoadCurrentLevel() foreach + Instantiate at Vector3.zero + static levelNumberToLoad persistence across LoadScene(0) + GoToNextLevel() ++ + RetryLevel() + Action nextButtonClickAction callback + Lander_OnLanded 4 types (success -> CONTINUE + GoToNextLevel, crashed/tooHard/tooSteep -> RETRY + RetryLevel) + GetLevelNumberToLoad() getter for StatsUI + static can't be SerializeField + score persistence via static[x]
 - Zoom System - Per-Level cameraStartTargetTransform + zoomedOutOrthographicSize + CinemachineCameraZoom2D Singleton (Instance + Awake) + NORMAL_ORTHOGRAPHIC_SIZE const = 10f vs targetOrthographicSize state + SetTargetOrthographicSize(target from GameLevel prefab) + SetNormalOrthographicSize() + Smooth Lerp with Time.deltaTime * zoomSpeed (2f) + TrackingTarget switch overview -> Lander in OnStateChanged[x]
+- Input System Refactoring - InputActions asset + Player Map + LanderUp/Left/Right Actions + Keyboard Bindings W,A,D+Arrows via Listen + Gamepad buttonSouth + leftStick left/right + Generate C# Class + GameInput.cs Singleton (private InputActions + new + Enable/Disable + bool IsUp/Left/RightActionPressed) + Lander.cs refactored from Keyboard.current to GameInput.Instance[x]
 
 ### 🕹 Controls
+
+#### ⌨️ Keyboard
 - **Up Arrow / W** - Thrust forward (where nose points)
 - **Left Arrow / A** - Rotate left
 - **Right Arrow / D** - Rotate right
+
+#### 🎮 Gamepad
+- **Button South [Xbox A / PS X]** - Thrust forward
+- **Left Stick Left** - Rotate left
+- **Left Stick Right** - Rotate right
 
 ### 📁 Project Structure
