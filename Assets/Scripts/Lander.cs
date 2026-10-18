@@ -68,9 +68,12 @@ public class Lander : MonoBehaviour {
             default:
 
             case State.WaitingToStart:
-
-            if (GameInput.Instance.IsUpActionPressed() || GameInput.Instance.IsLeftActionPressed() || GameInput.Instance.IsRightActionPressed()) {        // if any of the arrow keys are pressed either simultaneously or individually, the fuel is consumed per second and we call the ConsumeFuel() function to decrease the fuel amount.
+                                                                                    // if any of the arrow keys are pressed either simultaneously or individually, the fuel is consumed per second and we call the ConsumeFuel() function to decrease the fuel amount.
             ConsumeFuel();  
+            if (GameInput.Instance.IsUpActionPressed() ||
+                GameInput.Instance.IsLeftActionPressed() ||
+                GameInput.Instance.IsRightActionPressed() ||
+                GameInput.Instance.GetMovementInputVector2() != Vector2.zero) {     // if Movement stick not zero = (0,0) which it gets from the GameInput.Instance.GetMovementInputVector2(), then its mean player moved joystick / touched on-screen stick / pressed WASD composite and then the lander moves.  
 
             LanderRigidbody2D.gravityScale = GRAVITY_NORMAL ;
 
@@ -83,27 +86,32 @@ public class Lander : MonoBehaviour {
             if (fuelAmount <= 0f){                                                     // if fuel is 0 or less then we dont want to apply any force so we just return(the funtion does not do any work) and lander stops working.
             return;    
             }
-    
-            if (GameInput.Instance.IsUpActionPressed() || GameInput.Instance.IsLeftActionPressed() || GameInput.Instance.IsRightActionPressed()) {        // if any of the arrow keys are pressed either simultaneously or individually, the fuel is consumed per second and we call the ConsumeFuel() function to decrease the fuel amount.
+                                                                                       // if any of the arrow keys are pressed either simultaneously or individually, the fuel is consumed per second and we call the ConsumeFuel() function to decrease the fuel amount.
+            if (GameInput.Instance.IsUpActionPressed() ||
+                GameInput.Instance.IsLeftActionPressed() ||
+                GameInput.Instance.IsRightActionPressed() ||
+                GameInput.Instance.GetMovementInputVector2() != Vector2.zero) {        //  if Movement stick not zero = (0,0) then its mean player moved joystick / touched on-screen stick / pressed WASD composite and then the lander moves.
                 
                 ConsumeFuel();                                            
             }
-    
-            if (GameInput.Instance.IsUpActionPressed() ){
+
+            float gamePadDeadZone = 0.4f ;                                             // Deadzone = ignore small stick drift. Stick at (0,0.1) is drift, don't thrust. Only if > 0.4 consider it real input.
+
+            if (GameInput.Instance.IsUpActionPressed() || GameInput.Instance.GetMovementInputVector2().y > gamePadDeadZone ){    // Move Up ,if W/UpArrow/ButtonSouth OR stick pushed up > 0.4 (vector2 +ve y value)
     
                 float force = 700f ;
                 LanderRigidbody2D.AddForce(force * transform.up * Time.deltaTime);
     
                 OnUpForce?.Invoke(this, EventArgs.Empty) ;                             // fire off / invoke the OnUpForce event when the up arrow key is pressed and the upward force is applied. This allows any subscribers/listeners to react to the upward force being applied.
             }
-            if (GameInput.Instance.IsRightActionPressed()){
+            if (GameInput.Instance.IsRightActionPressed() || GameInput.Instance.GetMovementInputVector2().x > gamePadDeadZone){    // Move Right, if D/RightArrow/stick right OR stick x > 0.4 (vector2 +ve x value)
     
                 float turnSpeed = -100f ;
                 LanderRigidbody2D.AddTorque(turnSpeed * Time.deltaTime);
     
                 OnRightForce?.Invoke(this, EventArgs.Empty) ;                          // fire off / invoke the OnRightForce event when the right arrow key is pressed and the rightward torque is applied. This allows any subscribers/listeners to react to the rightward force being applied.
             }
-            if (GameInput.Instance.IsLeftActionPressed()){
+            if (GameInput.Instance.IsLeftActionPressed() || GameInput.Instance.GetMovementInputVector2().y < -gamePadDeadZone){    // Move Left, if A/LeftArrow/stick left OR stick y < -0.4 (vector2 -ve y value)
     
                 float turnSpeed = +100f ;
                 LanderRigidbody2D.AddTorque(turnSpeed * Time.deltaTime);

@@ -29,4 +29,8 @@ public class GameInput : MonoBehaviour {                          //  Created a 
     public bool IsRightActionPressed() {                     // Helper for right rotation
         return inputActions.Player.LanderRight.IsPressed();  // Checks D + RightArrow + Gamepad Right Shoulder
     }
+
+    public Vector2 GetMovementInputVector2() {                 // Returns Vector2 (x,y) from -1 to +1 - for stick / WASD composite / on-screen joystick. Its a helper function for Lander.cs to get the current value of Movement Action as Vector2. If stick pushed up = (0,1), left = (-1,0), idle = (0,0). Lander.cs can use this to check if player is pressing any movement keys or not.when the game pad stick is moved , it returns the value of the stick movement as Vector2 and GameInput.GetMovementInputVector2() reads the value [e.g (-0.6,0)] and returns it to Lander.cs and it checks if the value is not equal to zero then it consumes fuel.
+    return inputActions.Player.Movement.ReadValue<Vector2>();  // ReadValue<Vector2> = get current value of Movement Action as Vector2. If stick pushed up = (0,1), left = (-1,0), idle = (0,0)
+}
 }
