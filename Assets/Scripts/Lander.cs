@@ -66,10 +66,9 @@ public class Lander : MonoBehaviour {
              
         switch (state) {                                                           // Here switch shows that states as labels in which the waiting state(EaitingToStart) is default i,e nothing works, lander floats in air ,no gravity,no thrusters and fuel consumtion and no animation , if any key is pressed state becomes normal, all things go normal and works, and when lander lands/crashes state labels that game is over and al the working things breaks/deosn't work and landed UI is shown.This three states sepration as three labels, is just for the sake of seprating waiting ,working and not working logics of all lander input components.  
             default:
-
+            
             case State.WaitingToStart:
-                                                                                    // if any of the arrow keys are pressed either simultaneously or individually, the fuel is consumed per second and we call the ConsumeFuel() function to decrease the fuel amount.
-            ConsumeFuel();  
+                                                                                    // if any of the arrow keys are pressed either simultaneously or individually, the fuel is consumed per second and we call the ConsumeFuel() function to decrease the fuel amount.  
             if (GameInput.Instance.IsUpActionPressed() ||
                 GameInput.Instance.IsLeftActionPressed() ||
                 GameInput.Instance.IsRightActionPressed() ||
