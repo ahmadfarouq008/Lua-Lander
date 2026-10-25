@@ -14,42 +14,40 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentVersion: 1.00
   subtype: lunarLanderFree
-  lastShownTimestamp: 1792317500
+  lastShownTimestamp: 1792923604
   lastUpdateResponse:
     version: 1.00
     versionUrl: https://unitycodemonkey.com
-  checkedLastUpdateTimestamp: 1792317500
+  checkedLastUpdateTimestamp: 1792923604
   lastQOTDResponse:
-    questionId: 353
-    questionText: 'Does this variable get reset when you load a different Scene?
-
-      <p>private
-      static int score;</p>'
-    answerA: Yes
-    answerB: No
-    answerC: Only when loading the Main Menu
+    questionId: 356
+    questionText: Where are PlayerPrefs actually saved on Windows?
+    answerA: Game install folder
+    answerB: User data
+    answerC: Registry
     answerD: 
     answerE: 
-  lastQotdTimestamp: 1792317500
+  lastQotdTimestamp: 1792923604
   lastDynamicHeaderResponse:
-    topImageUrl: https://codemonkeyexternal.blob.core.windows.net/external/Misc/humbleSep26Synty.png
-    topText: AWESOME Synty Asset with THOUSANDS of great assets!
-    topLink: humblebundle
-    bottomText: My 10+ Years of C# Knowledge in 1 Course!
-    bottomLink: csharpcourse
-  lastDynamicHeaderTimestamp: 1792317500
+    topImageUrl: https://codemonkeyexternal.blob.core.windows.net/external/Misc/codeMonkeyEndOfSummerBundleOct26.png
+    topText: Back for a limited time until the END OF SUMMER, 80% OFF all my Courses
+      and Games!
+    topLink: summerbundle
+    bottomText: FREE Game Dev Insights every week straight to your inbox!
+    bottomLink: gamedevreport
+  lastDynamicHeaderTimestamp: 1792923604
   websiteLatestMessage:
     text: <a href="https://cmonkey.co/freecourses">Check out all my FREE courses!
       Click here!</a>
-  websiteLatestMessageTimestamp: 1792317500
+  websiteLatestMessageTimestamp: 1792923604
   websiteLatestVideos:
     videos:
+    - youTubeId: IOpC_qtcV_Q
+      title: A new C# version is NOT a new programming language!
+    - youTubeId: H05_7PBPbzQ
+      title: TOP 10 NEW Games, Made with Unity! (SEPTEMBER 2026)
+    - youTubeId: zqxQ7PAeNN4
+      title: Unity is FINALLY moving to ONE Render Pipeline!
     - youTubeId: qjNGL4qQvrQ
       title: TOP 10 FREE NEW Assets OCTOBER 2026!
-    - youTubeId: HD1wNUTZ0_Y
-      title: Sell 25,000 copies in 24 HOURS? Steam's Update EXPLAINED!
-    - youTubeId: OzldphY8pTs
-      title: THIS is why your game looks TERRIBLE!
-    - youTubeId: o4WEUv31JOc
-      title: If your code is HORRIBLE watch this!
-  websiteLatestVideosTimestamp: 1792317500
+  websiteLatestVideosTimestamp: 1792923604
