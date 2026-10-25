@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Unity.Cinemachine;
+using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -88,11 +89,11 @@ public class GameManager : MonoBehaviour {
     public void GoToNextLevel(){
 
         levelNumberToLoad++ ;                                                              // Go from Level 1 to 2 .After reload, Unity calls Start() again -> LoadCurrentLevel() -> foreach finds levelNumber == 2 -> spawns Level_2.
-        SceneManager.LoadScene(0) ;                                                        // Reload scene index 0 (your main game scene). This destroys old Level_1 clone, Lander, coins and calls Start() again. Because levelNumberToLoad is static, after reload it is still 2, so LoadCurrentLevel() will spawn Level_2 now, but if levelNumberToLoad is not static then the scene is recreated and levelNumberToLoad will reload again as 1 and level_1 will be spawned again.  
+        SceneLoader.LoadScene(SceneLoader.Scene.GameScene) ;                                                        // Reload GameScene (your main game scene). This destroys old Level_1 clone, Lander, coins and calls Start() again. Because levelNumberToLoad is static, after reload it is still 2, so LoadCurrentLevel() will spawn Level_2 now, but if levelNumberToLoad is not static then the scene is recreated and levelNumberToLoad will reload again as 1 and level_1 will be spawned again. Reload GameScene - GameScene will spawn level based on levelNumber - same loader as Play button 
     }
     public void RetryLevel(){                                                             
         
-        SceneManager.LoadScene(0) ;                                                       //   Only reload scene, DON'T do ++. So levelNumberToLoad stays 1, Level_1 spawns again
+        SceneLoader.LoadScene(SceneLoader.Scene.GameScene) ;                                                       //   Only reload scene, DON'T do ++. So levelNumberToLoad stays 1, Level_1 spawns again
     }
     public int GetLevelNumberToLoad() {
 
