@@ -335,7 +335,23 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - Added bool helpers: `public bool IsUpActionPressed() { return inputActions.Player.LanderUp.IsPressed(); }` + `IsLeft...` + `IsRight...` - bool = true/false question, IsPressed returns bool, wrapper returns it, Lander does `if(true)`
 - Why private inputActions + public bool getter? Encapsulation - Lander can't do `Enable()/Disable()` or cheat bindings, only GameInput controls it, single source of truth
 - Refactored `Lander.cs`: Before `if(Keyboard.current.upArrowKey.isPressed || Keyboard.current.wKey.isPressed)` After `if(GameInput.Instance.IsUpActionPressed())` - same for Left/Right - clean, rebindable, gamepad-ready, no hardcoded keys
-- Why IsPressed() not performed event? performed fires ONCE when pressed - good for shoot. For thrust we need held check every FixedUpdate for AddForce - IsPressed true while held
+- Why IsPressed() not performed event? performed fires ONCE when pressed - good for shoot. For thrust we need held check every FixedUpdate for AddForce - IsPressed true while held.
+
+#### ✅ Part 23: Touch Input - Joystick, JoystickCenter & On-Screen Stick [05:40:00]
+- Added TouchUI inside Canvas for mobile - Joystick background Image + JoystickCenter handle Image - JoystickCenter is child of Joystick
+- Added On-Screen Stick component to Joystick GameObject - Path = Player/Movement - controls JoystickCenter RectTransform, writes Vector2 to Movement Action when dragged
+- Disabled old Up, Left, Right On-Screen Buttons - both systems cannot work together - Joystick + 3 buttons write to same Player Actions at same time and fight, joystick alone does all 3 directions so buttons redundant
+- Why Joystick only? Movement Action is Value Vector2 - y > 0 = Up thrust, x < 0 = Left rotate, x > 0 = Right rotate - one stick covers W+A+D + Up/Left/Right + Gamepad leftStick
+- Movement Action setup: Type = Value, Control Type = Vector2 - bindings = Gamepad leftStick + WASD 2D Composite + Arrows Composite + On-Screen Joystick - one Action, many devices
+- GameInput.cs: GetMovementInputVector2() { return inputActions.Player.Movement.ReadValue<Vector2>(); } - ReadValue<Vector2> returns current stick vector (x,y) -1 to 1, (0,0)=idle, (0,1)=up, (-1,0)=left, (1,0)=right
+- Lander.cs WaitingToStart: added || GetMovementInputVector2() != Vector2.zero - any touch drag on JoystickCenter starts game, enables GRAVITY_NORMAL
+- Lander.cs Normal: same check for ConsumeFuel() - fuel burns on touch input too
+- Lander.cs thrust/rotate with deadzone: float gamepadDeadzone = .4f - ignores drift - if Movement.y > 0.4f thrust up, if Movement.x < -0.4f rotate left, if Movement.x > 0.4f rotate right - combined with IsUp/Left/RightActionPressed() via ||
+- Testing: Game View mouse drag on JoystickCenter simulates touch, Device Simulator, Unity Remote - no build needed - on Android/iOS build Input System touch backend works automatically
+- Benefit: zero gameplay code change for touch - abstraction via InputActions asset - keyboard + gamepad + touch all use same GetMovementInputVector2() call.
+
+### 🚀 Live Demo
+<img width="800" height="420" alt="Image" src="https://github.com/user-attachments/assets/8bb3cf7d-9e9c-4d11-bff2-af820dc7baac" />
   
 ### 🎮 Features Implemented
 - URP 2D Project Setup in Unity 6.5[x]
@@ -366,6 +382,7 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - Levels - Prefab Level System + GameLevel.cs (levelNumber + landerStartPositionTransform) + gameLevelList List<GameLevel> + LoadCurrentLevel() foreach + Instantiate at Vector3.zero + static levelNumberToLoad persistence across LoadScene(0) + GoToNextLevel() ++ + RetryLevel() + Action nextButtonClickAction callback + Lander_OnLanded 4 types (success -> CONTINUE + GoToNextLevel, crashed/tooHard/tooSteep -> RETRY + RetryLevel) + GetLevelNumberToLoad() getter for StatsUI + static can't be SerializeField + score persistence via static[x]
 - Zoom System - Per-Level cameraStartTargetTransform + zoomedOutOrthographicSize + CinemachineCameraZoom2D Singleton (Instance + Awake) + NORMAL_ORTHOGRAPHIC_SIZE const = 10f vs targetOrthographicSize state + SetTargetOrthographicSize(target from GameLevel prefab) + SetNormalOrthographicSize() + Smooth Lerp with Time.deltaTime * zoomSpeed (2f) + TrackingTarget switch overview -> Lander in OnStateChanged[x]
 - Input System Refactoring - InputActions asset + Player Map + LanderUp/Left/Right Actions + Keyboard Bindings W,A,D+Arrows via Listen + Gamepad buttonSouth + leftStick left/right + Generate C# Class + GameInput.cs Singleton (private InputActions + new + Enable/Disable + bool IsUp/Left/RightActionPressed) + Lander.cs refactored from Keyboard.current to GameInput.Instance[x]
+- Touch Input - TouchUI Canvas + Joystick background + JoystickCenter handle + On-Screen Stick Path=Player/Movement + Disabled Up/Left/Right buttons (conflict, joystick does all) + Movement Value Vector2 + GetMovementInputVector2() + deadzone 0.4f + ReadValue check[x]
 
 ### 🕹 Controls
 
@@ -378,5 +395,11 @@ This is not a tutorial copy-paste. I am documenting my journey from zero to a pl
 - **Button South [Xbox A / PS X]** - Thrust forward
 - **Left Stick Left** - Rotate left
 - **Left Stick Right** - Rotate right
+
+#### 📱 Touch [Android / iOS / iPad / Tab]
+- **Joystick Drag Up** - Thrust forward
+- **Joystick Drag Left** - Rotate left
+- **Joystick Drag Right** - Rotate right
+- **Idle** - No input 
 
 ### 📁 Project Structure
