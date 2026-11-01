@@ -3341,6 +3341,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0b706b04af785d4bb8d1bbe3cda15c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PausedUI
+  resumeButton: {fileID: 1968137978}
 --- !u!4 &1742331562 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7777506112856376982, guid: 491bc9f68306cad40a65002e796205eb, type: 3}

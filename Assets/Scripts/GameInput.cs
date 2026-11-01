@@ -1,7 +1,10 @@
+using System;
 using UnityEngine; 
 
 public class GameInput : MonoBehaviour {                          //  Created a seprate code file for controls input which is known as Input System wrapper so Lander.cs never touches Keyboard directly.Get Free Gamepad/Controller buttons - LanderUp action has Gamepad binding too, no extra code.Rebindable - Player can change W to Space in options, Lander code never changes.Decoupled - Want mobile joystick later? Change only GameInput.cs, not Lander.cs.No magic strings - Keyboard.current.wKey is string-like, InputActions is type-safe
     public static GameInput Instance { get; private set; } 
+
+    public event EventHandler OnMenuButtonPressed;                // this is an event that is called when the menu button is pressed. It is used to pause and unpause the game. The event is subscribed to by the GameManager class, which calls the PauseUnpausedGame() method when the event is triggered.
 
     private InputActions inputActions;                            // InputActions = the C# class auto-generated from your InputActions.inputactions asset file. It contains your Player Map + LanderUp/Left/Right Actions + all bindings.Acts as initialization to input system as null at this point(and we will add to it the mapping and binding we did in inspector's edit, in upcoming code lines by using 'new'), just a box, no object inside yet.
 
@@ -12,6 +15,12 @@ public class GameInput : MonoBehaviour {                          //  Created a 
         inputActions = new InputActions();                      // Create new instance of InputActions - loads the Player Map + LanderUp/Left/Right actions at every start of game. Without new, inputActions is null -> inputActions.Enable() would crash NullReferenceException.After new, inputActions now holds all your bindings you set in editor - W, UpArrow, A, D etc.We cretae this because GameInput.cs dont know InputActions file and we store it as a new data/Instanc inside inputAction variable.  
 
         inputActions.Enable();                                  // IMPORTANT - Enable the Action Map, if you don't Enable, IsPressed() will always be false
+    
+        inputActions.Player.Menu.performed += Menu_performed;   // Listen to Unity Input System's Menu action (Escape) performed event - when pressed, call Menu_performed() to TRANSLATE it into our own custom made OnMenuButtonPressed event and then GameManager.cs will listen to that event and call PauseUnpausedGame() to pause/unpause the game. This is the decoupling of Input System from GameManager.cs. We don't want GameManager.cs to know about Input System, we want it to know about our own custom event. So we translate Input System's Menu action into our own custom event OnMenuButtonPressed.
+    }
+
+    private void Menu_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {    // this formaility code when declaring any event translates the Menu.Perform input action into OnMenuButtonPressed, so that the GameInput.cs knows that Esc key is the button for Menu action . The obj is the context of the input action, which contains information about the input action that was performed. We don't need to use it in this case, but we need to include it in the method signature to match the event handler delegate.
+        OnMenuButtonPressed?.Invoke (this,EventArgs.Empty);       
     }
 
     private void OnDestroy() {                                 // Called when this GameObject is destroyed / scene reloads

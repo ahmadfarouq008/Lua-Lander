@@ -1,16 +1,21 @@
+using System;
 using System.Collections.Generic;
 using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
 
 public class GameManager : MonoBehaviour {
 
     public static GameManager Instance { get ; private set;}
-
     private static int levelNumberToLoad = 1 ;                                             // this variable in serialized field means that level number we want to load , we set our desired level no. we want to load through inspector.These previous lines are not more applicable because we now made this a 'static' field(i.e GLOBAL LEVEL TRACKER - belongs to class, not GameObject, so it doesn't reset on scene reload .private = only GameManager can see it, static = stays alive (i.e. levelNumberTOload will remain 1 on starting level_1 ,remains 2 on countinuing to level_2 and so on, either the the game scene reloads/destroys the level prefab clone or not.Normal variable resets to Inspector value every time you reload scene. static does NOT reset. It stays alive in memory even when scene reloads. ) even after LoadScene(0). It is equal to 1 = game starts from Level 1) not a 'serialized' field (i.e, if not static then the levelNumberTOLoad value will reset to 1 in inspector every time you reload the scene through LoadScene(0) and the next level does not spawns on clicking countinue button.) . Why Static needed? When you do SceneManager.LoadScene(0), whole scene gets destroyed and recreated. If levelNumber was NOT static, it would go back to 1 again every time. You would never go to Level 2. With static, if you make it 2, after reload it stays 2, so Start() -> LoadCurrentLevel() will load Level_2.
+    
+    public event EventHandler OnGamePaused ;            // this is an event that is called when the game is paused. It is used to show the pause menu and stop the game. The event is subscribed to by the PausedUI class, which calls the Show() method to show the pause menu when the event is triggered.
+    public event EventHandler OnGameUnpaused ;          // this is an event that is called when the game is unpaused. It is used to hide the pause menu and resume the game. The event is subscribed to by the PausedUI class, which calls the Hide() method to hide the pause menu when the event is triggered.
+
     [SerializeField] private List<GameLevel> gameLevelList ;
     [SerializeField] private CinemachineCamera cinemachineCamera ;
 
@@ -28,8 +33,14 @@ public class GameManager : MonoBehaviour {
         Lander.Instance.OnLanded += Lander_OnLanded ;                                                        // Subscribe to the OnLanded event from the Lander script. When the event is triggered, the Lander_OnLanded method will be called. This allows the GameManager to react to the lander successfully landing on a landing pad and handle scoring or other game logic related to landing.
         Lander.Instance.OnStateChanged += Lander_OnStateChanged ;       
 
+        GameInput.Instance.OnMenuButtonPressed += GameInput_OnMenuButtonPressed ;                            // Subscribe to the OnMenuButtonPressed event from the GameInput script. When the event is triggered, the GameInput_OnMenuButtonPressed method will be called. This allows the GameManager to react to the player pressing the menu button (Escape key) and handle pausing or unpausing the game.
+
         LoadCurrentLevel() ;                                                                                 // Call this function at start to load the correct level .
     } 
+
+    private void GameInput_OnMenuButtonPressed(object sender, System.EventArgs e){                          // this is an event that is called when the menu button is pressed. It is used to pause and unpause the game. The event is subscribed to by the GameManager class, which calls the PauseUnpausedGame() method when the event is triggered.
+        PauseUnpausedGame() ;                                                           
+    }
     private void Lander_OnStateChanged(object sender, Lander.OnStateChangedEventArgs e){
 
         if(e.stateAsEventArg == Lander.State.Normal) {
@@ -41,7 +52,7 @@ public class GameManager : MonoBehaviour {
             
             cinemachineCamera.Target.TrackingTarget = Lander.Instance. transform ;                           // Switch camera target from level overview to Lander itself - now camera follows Lander
             
-            CinemachineCameraZoom2D.Instance.SetNormalOrthographicSize() ;                                   // // Zoom IN from big overview size to normal gameplay size 10.                                                                  // Switch camera zoom from overview to normal zoomed in view of Lander
+            CinemachineCameraZoom2D.Instance.SetNormalOrthographicSize() ;                                   // Zoom IN from big overview size to normal gameplay size 10.                                                                  // Switch camera zoom from overview to normal zoomed in view of Lander
         }
     }
     private void Update(){
@@ -99,6 +110,28 @@ public class GameManager : MonoBehaviour {
 
         return levelNumberToLoad ;                                                        // the getter function of current level that is loaded.used this call in StatsUI.cs and to write in there in stats text . 
     }
+
+    public void PauseUnpausedGame(){     
+
+        if (Time.timeScale == 1f){       
+            PauseGame() ;                
+        }
+        else {
+            UnPauseGame() ;             
+        }
+    }
+        
+    
+    public void PauseGame() {             // this method is called to pause the game. It sets the time scale to 0, which effectively stops all time-based operations in the game, and invokes the OnGamePaused event to notify any subscribers that the game has been paused.
+        Time.timeScale = 0f;               
+        OnGamePaused?.Invoke(this, EventArgs.Empty) ; // its mean "if OnGamePaused is not null, then invoke it". This is a null-conditional operator that prevents a NullReferenceException if there are no subscribers to the event. The event is triggered when the game is paused, and it can be subscribed to by other scripts to perform actions when the game is paused.
+    }
+
+    public void UnPauseGame() {          //
+        Time.timeScale = 1f;             //
+        OnGameUnpaused?.Invoke(this,EventArgs.Empty) ; // its mean "if OnGameUnpaused is not null, then invoke it". This is a null-conditional operator that prevents a NullReferenceException if there are no subscribers to the event. The event is triggered when the game is unpaused, and it can be subscribed to by other scripts to perform actions when the game is unpaused.
+    }
+
 
 }
 
